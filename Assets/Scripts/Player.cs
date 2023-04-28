@@ -16,12 +16,16 @@ public class Player : MonoBehaviour
     public float attackRange;
     public float attackSpeed;
 
+    private Rigidbody2D rb;
+    private Animator anim;
     private Vector3 direction;
     private float curTime;
 
     private void Start()
     {
         curTime = 0f;
+        rb = GetComponent<Rigidbody2D>();
+        anim = GetComponentInChildren<Animator>();
     }
 
     private void Update()
@@ -38,23 +42,33 @@ public class Player : MonoBehaviour
 
     private void DirectionSetting()
     {
-        if (Input.GetKeyDown(KeyCode.UpArrow))
+        float horizontal = Input.GetAxisRaw("Horizontal");
+        float vertical = Input.GetAxisRaw("Vertical");
+
+        if (horizontal == 0f && vertical == 0f)
         {
-            direction = Vector3.up;
+            anim.SetBool("isMove", false);
         }
-        else if (Input.GetKeyDown(KeyCode.DownArrow))
+        else
         {
-            direction = Vector3.down;
+            anim.SetBool("isMove", true);
+
+            if (horizontal != 0f)
+            {
+                transform.localScale = new Vector3(horizontal, 1, 1);
+                direction = new Vector3(horizontal, 0);
+            }
+            else if (vertical != 0f)
+            {
+                direction = new Vector3(0, vertical);
+            }
         }
-        else if (Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            direction = Vector3.right;
-        }
-        else if (Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            direction = Vector3.left;
-        }
+            
+        anim.SetFloat("X", horizontal);
+        anim.SetFloat("Y", vertical);
+       
         attackBox.position = transform.position + direction * attackRange;
+
     }
 
     private void Attack()
