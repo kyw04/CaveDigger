@@ -77,61 +77,6 @@ public class Player : MonoBehaviour
             transform.localScale = newScale;
         }
         attackBox.position = transform.position + attackBoxDir * attackRange;
-
-        //if (Input.GetKeyDown(KeyCode.RightArrow))
-        //{
-        //    lastHorizontalDownTime = Time.time;
-        //    anim.SetFloat("LastHorizontal", 1);
-        //}
-        //if (Input.GetKeyDown(KeyCode.LeftArrow))
-        //{
-        //    lastHorizontalDownTime = Time.time;
-        //    anim.SetFloat("LastHorizontal", -1);
-        //}
-        //if (Input.GetKeyDown(KeyCode.UpArrow))
-        //{
-        //    lastVerticalDownTime = Time.time;
-        //    anim.SetFloat("LastVertical", 1);
-        //}
-        //if (Input.GetKeyDown(KeyCode.DownArrow))
-        //{
-        //    lastVerticalDownTime = Time.time;
-        //    anim.SetFloat("LastVertical", -1);
-        //}
-
-        //if (lastHorizontalDownTime > lastVerticalDownTime)
-        //{
-        //    anim.SetFloat("LastVertical", 0);
-        //}
-        //else if (lastHorizontalDownTime < lastVerticalDownTime)
-        //{
-        //    anim.SetFloat("LastHorizontal", 0);
-        //}
-
-        //    if (horizontal == 0f && vertical == 0f)
-        //    {
-        //        anim.SetBool("isMove", false);
-        //    }
-        //    else
-        //    {
-        //        anim.SetBool("isMove", true);
-
-        //        if (horizontal != 0f)
-        //        {
-        //            transform.localScale = new Vector3(horizontal, 1, 1);
-        //            direction = new Vector3(horizontal, 0);
-        //        }
-        //        else if (vertical != 0f)
-        //        {
-        //            direction = new Vector3(0, vertical);
-        //        }
-        //    }
-
-        //    anim.SetFloat("X", horizontal);
-        //    anim.SetFloat("Y", vertical);
-
-        //    attackBox.position = transform.position + direction * attackRange;
-
     }
 
     private void Attack()
