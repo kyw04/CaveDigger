@@ -134,7 +134,6 @@ GameObject:
   - component: {fileID: 32723456}
   - component: {fileID: 32723454}
   - component: {fileID: 32723453}
-  - component: {fileID: 32723452}
   - component: {fileID: 32723451}
   - component: {fileID: 32723450}
   m_Layer: 0
@@ -165,6 +164,7 @@ MonoBehaviour:
   health: 100
   maxRadiation: 0
   radiation: 0
+  speed: 5
   damage: 3.5
   attackRange: 1
   attackSpeed: 1.5
@@ -179,24 +179,6 @@ SortingGroup:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 15
---- !u!114 &32723452
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 32723449}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d926fec57fb4c411a912d607e2822370, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rigidbody2D: {fileID: 0}
-  typeOfControl: 0
-  speed: 15
-  movementType: 0
-  orientToDirection: 0
-  lookAxis: 0
 --- !u!50 &32723453
 Rigidbody2D:
   serializedVersion: 4
@@ -949,7 +931,7 @@ Transform:
   m_GameObject: {fileID: 1323906584}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.2, z: 0}
-  m_LocalScale: {x: 5, y: 5, z: 4.9667}
+  m_LocalScale: {x: 1, y: 1, z: 4.9667}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 32723456}
@@ -1307,6 +1289,7 @@ GameObject:
   - component: {fileID: 1871109199}
   - component: {fileID: 1871109198}
   - component: {fileID: 1871109197}
+  - component: {fileID: 1871109200}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1380,6 +1363,24 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1871109200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1871109196}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb92fe9fb330e4a15ba1f8109e5b3274, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 32723456}
+  limitBounds: 0
+  left: -5
+  right: 5
+  bottom: -5
+  top: 5
 --- !u!1 &2064579952
 GameObject:
   m_ObjectHideFlags: 0

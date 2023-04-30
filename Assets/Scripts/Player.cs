@@ -12,13 +12,16 @@ public class Player : MonoBehaviour
     public float health = 100f;
     public float maxRadiation = 0f;
     public float radiation = 0f;
+    public float speed = 5f;
     public float damage = 3.5f;
     public float attackRange;
     public float attackSpeed;
 
     private Rigidbody2D rb;
     private Animator anim;
-    private Vector3 direction;
+    private Vector2 movement;
+    private Vector3 attackBoxDir;
+    private Vector3 startScale;
     private float curTime;
 
     private void Start()
@@ -26,10 +29,14 @@ public class Player : MonoBehaviour
         curTime = 0f;
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponentInChildren<Animator>();
+        attackBoxDir = Vector3.up;
+        startScale = transform.lossyScale;
     }
 
     private void Update()
     {
+        movement.x = Input.GetAxisRaw("Horizontal");
+        movement.y = Input.GetAxisRaw("Vertical");
         DirectionSetting();
 
         if (curTime + attackSpeed <= Time.time && Input.GetKeyDown(KeyCode.X))
@@ -40,34 +47,90 @@ public class Player : MonoBehaviour
         UISetting();
     }
 
+    private void FixedUpdate()
+    {
+        rb.MovePosition(rb.position + movement * speed * Time.deltaTime);
+    }
+
     private void DirectionSetting()
     {
-        float horizontal = Input.GetAxisRaw("Horizontal");
-        float vertical = Input.GetAxisRaw("Vertical");
+        anim.SetFloat("Horizontal", movement.x);
+        anim.SetFloat("Vertical", movement.y);
+        anim.SetFloat("Speed", movement.sqrMagnitude);
 
-        if (horizontal == 0f && vertical == 0f)
+        if (movement.x != 0 || movement.y != 0)
         {
-            anim.SetBool("isMove", false);
-        }
-        else
-        {
-            anim.SetBool("isMove", true);
+            anim.SetFloat("LastHorizontal", movement.x);
+            anim.SetFloat("LastVertical", movement.y);
 
-            if (horizontal != 0f)
+            attackBoxDir = Vector3.zero;
+            Vector3 newScale = startScale;
+            if (movement.y != 0)
             {
-                transform.localScale = new Vector3(horizontal, 1, 1);
-                direction = new Vector3(horizontal, 0);
+                attackBoxDir.y = movement.y;
             }
-            else if (vertical != 0f)
+            else
             {
-                direction = new Vector3(0, vertical);
+                attackBoxDir.x = movement.x;
+                newScale.x = movement.x;
             }
+            transform.localScale = newScale;
         }
-            
-        anim.SetFloat("X", horizontal);
-        anim.SetFloat("Y", vertical);
-       
-        attackBox.position = transform.position + direction * attackRange;
+        attackBox.position = transform.position + attackBoxDir * attackRange;
+
+        //if (Input.GetKeyDown(KeyCode.RightArrow))
+        //{
+        //    lastHorizontalDownTime = Time.time;
+        //    anim.SetFloat("LastHorizontal", 1);
+        //}
+        //if (Input.GetKeyDown(KeyCode.LeftArrow))
+        //{
+        //    lastHorizontalDownTime = Time.time;
+        //    anim.SetFloat("LastHorizontal", -1);
+        //}
+        //if (Input.GetKeyDown(KeyCode.UpArrow))
+        //{
+        //    lastVerticalDownTime = Time.time;
+        //    anim.SetFloat("LastVertical", 1);
+        //}
+        //if (Input.GetKeyDown(KeyCode.DownArrow))
+        //{
+        //    lastVerticalDownTime = Time.time;
+        //    anim.SetFloat("LastVertical", -1);
+        //}
+
+        //if (lastHorizontalDownTime > lastVerticalDownTime)
+        //{
+        //    anim.SetFloat("LastVertical", 0);
+        //}
+        //else if (lastHorizontalDownTime < lastVerticalDownTime)
+        //{
+        //    anim.SetFloat("LastHorizontal", 0);
+        //}
+
+        //    if (horizontal == 0f && vertical == 0f)
+        //    {
+        //        anim.SetBool("isMove", false);
+        //    }
+        //    else
+        //    {
+        //        anim.SetBool("isMove", true);
+
+        //        if (horizontal != 0f)
+        //        {
+        //            transform.localScale = new Vector3(horizontal, 1, 1);
+        //            direction = new Vector3(horizontal, 0);
+        //        }
+        //        else if (vertical != 0f)
+        //        {
+        //            direction = new Vector3(0, vertical);
+        //        }
+        //    }
+
+        //    anim.SetFloat("X", horizontal);
+        //    anim.SetFloat("Y", vertical);
+
+        //    attackBox.position = transform.position + direction * attackRange;
 
     }
 
