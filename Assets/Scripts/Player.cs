@@ -12,7 +12,7 @@ public class Player : MonoBehaviour
     public float health = 100f;
     public float maxRadiation = 0f;
     public float radiation = 0f;
-    public float speed = 5f;
+    public float moveSpeed = 5f;
     public float damage = 3.5f;
     public float attackRange;
     public float attackSpeed;
@@ -49,7 +49,7 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.MovePosition(rb.position + movement * speed * Time.deltaTime);
+        rb.MovePosition(rb.position + movement * moveSpeed * Time.deltaTime);
     }
 
     private void DirectionSetting()
@@ -89,7 +89,7 @@ public class Player : MonoBehaviour
         {
             if (collider.CompareTag("Ground"))
             {
-                Debug.Log("Ground!");
+                //Debug.Log("Ground!");
                 Instantiate(BlockDestroyParticles[0], collider.transform.position, Quaternion.identity);
                 Destroy(collider.gameObject);
                 break;
