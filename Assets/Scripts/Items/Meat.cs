@@ -6,9 +6,6 @@ public class Meat : Item
 
     public override void RunItem()
     {
-        if (transform.parent == null || transform.parent.CompareTag("GameController"))
-            return;
-
         Player.instance.SetAbility();
     }
 }

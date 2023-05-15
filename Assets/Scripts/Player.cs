@@ -30,6 +30,8 @@ public class Player : MonoBehaviour
     private Vector3 attackBoxDir;
     private Vector3 startScale;
     private float curTime;
+    private float pickupTime = 0;
+    private float pickupDelay = 1.5f;
 
     private void Start()
     {
@@ -104,10 +106,10 @@ public class Player : MonoBehaviour
 
         foreach (Collider2D collider in collider2Ds)
         {
-            if (collider.CompareTag("Ground"))
+            if (collider.CompareTag("Wall"))
             {
                 q.Enqueue(collider.gameObject);
-                //Debug.Log("Ground!");
+                //Debug.Log("Wall!");
             }
             else if (collider.CompareTag("Enemy"))
             {
@@ -116,23 +118,23 @@ public class Player : MonoBehaviour
         }
 
         float minDis = -1;
-        GameObject minDisGround = null;
+        GameObject minDisWall = null;
         while (q.Count > 0)
         {
-            GameObject ground = q.Dequeue();
+            GameObject wall = q.Dequeue();
             float distance;
-            distance = Mathf.Abs(Vector2.Distance(ground.transform.position, transform.position));
+            distance = Mathf.Abs(Vector2.Distance(wall.transform.position, transform.position));
             if (minDis == -1 || minDis > distance)
             {
                 minDis = distance;
-                minDisGround = ground;
+                minDisWall = wall;
             }
         }
 
-        if (minDisGround != null)
+        if (minDisWall != null)
         {
-            Instantiate(BlockDestroyParticles[0], minDisGround.transform.position, Quaternion.identity);
-            Destroy(minDisGround.gameObject);
+            Instantiate(BlockDestroyParticles[0], minDisWall.transform.position, Quaternion.identity);
+            Destroy(minDisWall.gameObject);
         }
     }
 
@@ -144,14 +146,42 @@ public class Player : MonoBehaviour
         radiationText.text = (radiation / maxRadiation * 100f).ToString("F2") + "%";
     }
 
+    public void SetAbility()
+    {
+        Debug.Log("asd");
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (Time.timeScale == 0)
+            return;
+
+        Debug.Log("trigger");
+        if (collision.CompareTag("Pickup"))
+        {
+            if (Input.GetKey(KeyCode.F))
+            {
+                Debug.Log("Get Item");
+                Debug.Log(pickupTime.ToString("F0"));
+
+                if (pickupTime >= pickupDelay)
+                {
+                    pickupTime = 0f;
+                    collision.GetComponent<Item>().GetItem();
+                }
+
+                pickupTime += Time.deltaTime;
+            }
+            else
+            {
+                pickupTime = 0f;
+            }
+        }
+    }
+
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireCube(attackBox.transform.position, attackBox.localScale);
-    }
-
-    public void SetAbility()
-    {
-        Debug.Log("asd");
     }
 }

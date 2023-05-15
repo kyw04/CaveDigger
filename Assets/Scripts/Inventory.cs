@@ -12,11 +12,16 @@ public class Inventory : MonoBehaviour
     public Transform[] itemSlots;
     public RectTransform selectImage;
     public GameObject itemExplanationUI;
+    [HideInInspector] public GameObject selectedItem;
 
-    private GameObject selectedItem;
     private GraphicRaycaster raycaster;
     private PointerEventData pointerEventData;
     private EventSystem eventSystem;
+    private Image itemImage;
+    private TextMeshProUGUI itemName;
+    private TextMeshProUGUI itemRank;
+    private TextMeshProUGUI itemExplanation;
+    private Item SelectedItemExplanation;
 
     private Queue<Transform> emptyItemSlot = new Queue<Transform>();
 
@@ -31,6 +36,11 @@ public class Inventory : MonoBehaviour
 
         raycaster = GetComponent<GraphicRaycaster>();
         eventSystem = GetComponent<EventSystem>();
+
+        itemImage = itemExplanationUI.transform.Find("Item Image").GetComponent<Image>();
+        itemName = itemExplanationUI.transform.Find("Name").GetComponent<TextMeshProUGUI>();
+        itemRank = itemExplanationUI.transform.Find("Rank").GetComponent<TextMeshProUGUI>();
+        itemExplanation = itemExplanationUI.transform.Find("Explanation").GetComponent<TextMeshProUGUI>();
 
         foreach (Transform slot in itemSlots)
         {
@@ -65,43 +75,35 @@ public class Inventory : MonoBehaviour
         List<RaycastResult> results = new List<RaycastResult>();
         raycaster.Raycast(pointerEventData, results);
 
+        selectedItem = null;
         foreach (RaycastResult result in results)
         {
             if (result.gameObject.CompareTag("GameController"))
             {
-                //Debug.Log(result.gameObject.name);
                 selectedItem = result.gameObject;
                 selectImage.position = selectedItem.GetComponent<RectTransform>().position;
             }
         }
 
-        if (selectedItem != null)
+        if (selectedItem != null && SelectedItemExplanation != null)
         {
-            Item itemExplanation = selectedItem.GetComponentInChildren<Item>();
-
-            Image itemImage = itemExplanationUI.transform.Find("Item Image").GetComponent<Image>();
-            TextMeshProUGUI name = itemExplanationUI.transform.Find("Name").GetComponent<TextMeshProUGUI>();
-            TextMeshProUGUI rank = itemExplanationUI.transform.Find("Rank").GetComponent<TextMeshProUGUI>();
-            TextMeshProUGUI explanation = itemExplanationUI.transform.Find("Explanation").GetComponent<TextMeshProUGUI>();
-
-            itemImage.sprite = itemExplanation.sprite;
-            name.text = itemExplanation.itemName;
-            rank.text = itemExplanation.rankText;
-            rank.color = itemExplanation.rankColor;
-            explanation.text = itemExplanation.explanation;
+            itemImage.sprite = SelectedItemExplanation.sprite;
+            itemName.text = SelectedItemExplanation.itemName;
+            itemRank.text = SelectedItemExplanation.rankText;
+            itemRank.color = SelectedItemExplanation.rankColor;
+            itemExplanation.text = SelectedItemExplanation.explanation;
 
             selectImage.gameObject.SetActive(true);
             itemExplanationUI.SetActive(true);
 
             if (Input.GetKeyDown(KeyCode.F))
             {
-                selectedItem.transform.DetachChildren();
-
-                itemExplanation.PutItem();
+                SelectedItemExplanation.PutItem();
                 emptyItemSlot.Enqueue(selectedItem.transform);
 
                 selectedItem.SetActive(false);
                 selectedItem = null;
+                SelectedItemExplanation = null;
             }
         }
         else
@@ -109,6 +111,11 @@ public class Inventory : MonoBehaviour
             selectImage.gameObject.SetActive(false);
             itemExplanationUI.SetActive(false);
         }
+    }
+
+    public void SelectItemExplanation(Item _item)
+    {
+        SelectedItemExplanation = _item;
     }
 
     public Transform GetItemSlot()

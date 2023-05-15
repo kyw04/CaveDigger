@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum Rank
 {
@@ -18,36 +19,58 @@ public abstract class Item : MonoBehaviour
     public string explanation;
     public GameObject itemPrefab;
 
+    private Transform itemSlot;
     private SpriteRenderer spriteRenderer;
+    private BoxCollider2D itemCollider;
 
     public abstract void RunItem();
 
     private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        itemCollider = GetComponent<BoxCollider2D>();
         SetRank();
     }
 
     private void Update()
     {
+        if (transform.parent == null || !transform.parent.CompareTag("Player"))
+            return;
+
         RunItem();
+        SelectedItem();
     }
 
-    private void GetItem()
+    public void SelectedItem()
     {
-        Transform itemSlot = Inventory.instance.GetItemSlot();
+        GameObject selectedItem = Inventory.instance.selectedItem;
+        if (selectedItem != null && selectedItem == itemSlot.gameObject)
+        {
+            Inventory.instance.SelectItemExplanation(this);
+        }
+    }
+
+    public void GetItem()
+    {
+        itemSlot = Inventory.instance.GetItemSlot();
         if (itemSlot == null)
             return;
 
-        transform.SetParent(itemSlot);
+        itemSlot.GetComponent<Image>().sprite = sprite;
         itemSlot.gameObject.SetActive(true);
         spriteRenderer.enabled = false;
+        itemCollider.enabled = false;
+        transform.SetParent(Player.instance.transform);
     }
 
     public void PutItem()
     {
+        itemSlot = null;
+        transform.parent = null;
         transform.position = Player.instance.transform.position;
+        transform.localScale = Vector3.one;
         spriteRenderer.enabled = true;
+        itemCollider.enabled = true;
     }
 
     private void SetRank()
@@ -77,27 +100,5 @@ public abstract class Item : MonoBehaviour
         }
 
         rankColor = color;
-    }
-
-    public void Copy(Item _itme)
-    {
-        this.sprite = _itme.sprite;
-        this.itemName = _itme.itemName;
-        this.rank = _itme.rank;
-        this.explanation = _itme.explanation;
-
-        SetRank();
-    }
-
-    private void OnTriggerStay2D(Collider2D collision)
-    {
-        if (Time.timeScale == 0)
-            return;
-
-        Debug.Log("trigger");
-        if (collision.CompareTag("Player") && Input.GetKeyDown(KeyCode.F))
-        {
-            GetItem();
-        }
     }
 }
