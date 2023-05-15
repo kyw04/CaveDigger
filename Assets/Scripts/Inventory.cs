@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -7,7 +6,10 @@ using TMPro;
 
 public class Inventory : MonoBehaviour
 {
+    public static Inventory instance;
+
     public GameObject inventoryUI;
+    public Transform[] itemSlots;
     public RectTransform selectImage;
     public GameObject itemExplanationUI;
 
@@ -16,12 +18,27 @@ public class Inventory : MonoBehaviour
     private PointerEventData pointerEventData;
     private EventSystem eventSystem;
 
+    private Queue<Transform> emptyItemSlot = new Queue<Transform>();
+
+    private void Awake()
+    {
+        if (instance == null) instance = this;
+    }
+
     private void Start()
     {
         inventoryUI.SetActive(false);
 
         raycaster = GetComponent<GraphicRaycaster>();
         eventSystem = GetComponent<EventSystem>();
+
+        foreach (Transform slot in itemSlots)
+        {
+            if (slot.childCount == 0)
+            {
+                emptyItemSlot.Enqueue(slot);
+            }
+        }
     }
 
     private void Update()
@@ -60,7 +77,7 @@ public class Inventory : MonoBehaviour
 
         if (selectedItem != null)
         {
-            Item itemExplanation = selectedItem.GetComponent<Item>();
+            Item itemExplanation = selectedItem.GetComponentInChildren<Item>();
 
             Image itemImage = itemExplanationUI.transform.Find("Item Image").GetComponent<Image>();
             TextMeshProUGUI name = itemExplanationUI.transform.Find("Name").GetComponent<TextMeshProUGUI>();
@@ -78,9 +95,12 @@ public class Inventory : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.F))
             {
-                Instantiate(itemExplanation.itemPrefab, Player.instance.transform.position, Quaternion.identity);
+                selectedItem.transform.DetachChildren();
 
-                selectedItem.gameObject.SetActive(false);
+                itemExplanation.PutItem();
+                emptyItemSlot.Enqueue(selectedItem.transform);
+
+                selectedItem.SetActive(false);
                 selectedItem = null;
             }
         }
@@ -89,5 +109,16 @@ public class Inventory : MonoBehaviour
             selectImage.gameObject.SetActive(false);
             itemExplanationUI.SetActive(false);
         }
+    }
+
+    public Transform GetItemSlot()
+    {
+        if (emptyItemSlot.Count == 0)
+            return null;
+
+        Transform t = emptyItemSlot.Dequeue();
+        Debug.Log(t.name);
+        return t;
+        //return emptyItemSlot.Dequeue();
     }
 }

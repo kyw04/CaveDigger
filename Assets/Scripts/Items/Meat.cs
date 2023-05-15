@@ -2,10 +2,13 @@ using UnityEngine;
 
 public class Meat : Item
 {
-    private float health = 10f;
+    //private float health = 10f;
 
-    public override void GiveAbility()
+    public override void RunItem()
     {
+        if (transform.parent == null || transform.parent.CompareTag("GameController"))
+            return;
 
+        Player.instance.SetAbility();
     }
 }

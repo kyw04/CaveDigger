@@ -5,7 +5,7 @@ public enum Rank
     None, Normal, Rare, Epic, Legend
 }
 
-public class Item : MonoBehaviour
+public abstract class Item : MonoBehaviour
 {
     public Sprite sprite;
     public string itemName;
@@ -18,12 +18,39 @@ public class Item : MonoBehaviour
     public string explanation;
     public GameObject itemPrefab;
 
+    private SpriteRenderer spriteRenderer;
+
+    public abstract void RunItem();
+
     private void Start()
     {
-        RankSetting();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        SetRank();
     }
 
-    private void RankSetting()
+    private void Update()
+    {
+        RunItem();
+    }
+
+    private void GetItem()
+    {
+        Transform itemSlot = Inventory.instance.GetItemSlot();
+        if (itemSlot == null)
+            return;
+
+        transform.SetParent(itemSlot);
+        itemSlot.gameObject.SetActive(true);
+        spriteRenderer.enabled = false;
+    }
+
+    public void PutItem()
+    {
+        transform.position = Player.instance.transform.position;
+        spriteRenderer.enabled = true;
+    }
+
+    private void SetRank()
     {
         Color color = Color.gray;
 
@@ -52,16 +79,6 @@ public class Item : MonoBehaviour
         rankColor = color;
     }
 
-    public virtual void Ability()
-    {
-
-    }
-
-    public virtual void GiveAbility()
-    {
-
-    }
-
     public void Copy(Item _itme)
     {
         this.sprite = _itme.sprite;
@@ -69,6 +86,18 @@ public class Item : MonoBehaviour
         this.rank = _itme.rank;
         this.explanation = _itme.explanation;
 
-        RankSetting();
+        SetRank();
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (Time.timeScale == 0)
+            return;
+
+        Debug.Log("trigger");
+        if (collision.CompareTag("Player") && Input.GetKeyDown(KeyCode.F))
+        {
+            GetItem();
+        }
     }
 }

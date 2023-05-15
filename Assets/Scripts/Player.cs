@@ -1,11 +1,7 @@
 using System.Collections.Generic;
-using System.Linq;
-using TMPro;
-using Unity.VisualScripting;
-using UnityEditor.Build.Content;
 using UnityEngine;
-using UnityEngine.Experimental.GlobalIllumination;
 using UnityEngine.UI;
+using TMPro;
 
 public class Player : MonoBehaviour
 {
@@ -56,14 +52,14 @@ public class Player : MonoBehaviour
         movement.x = Input.GetAxisRaw("Horizontal");
         movement.y = Input.GetAxisRaw("Vertical");
 
-        DirectionSetting();
+        SetDirection();
 
         if (curTime + attackSpeed <= Time.time && Input.GetKeyDown(KeyCode.X))
         {
             Attack();
         }
 
-        UISetting();
+        SetUI();
     }
 
     private void FixedUpdate()
@@ -71,7 +67,7 @@ public class Player : MonoBehaviour
         rb.MovePosition(rb.position + movement.normalized * moveSpeed * Time.deltaTime);
     }
 
-    private void DirectionSetting()
+    private void SetDirection()
     {
         anim.SetFloat("Horizontal", movement.x);
         anim.SetFloat("Vertical", movement.y);
@@ -140,7 +136,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void UISetting()
+    private void SetUI()
     {
         healthImage.fillAmount = health / maxHealth;
         healthText.text = health.ToString() + " / " + maxHealth.ToString();
@@ -152,5 +148,10 @@ public class Player : MonoBehaviour
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireCube(attackBox.transform.position, attackBox.localScale);
+    }
+
+    public void SetAbility()
+    {
+        Debug.Log("asd");
     }
 }
