@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 374632528637682849}
   m_Layer: 0
   m_Name: Meat
-  m_TagString: Untagged
+  m_TagString: Pickup
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -96,14 +96,14 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 3.4176648, y: 2.6299999}
+    oldSize: {x: 1.367066, y: 1.052}
     newSize: {x: 3.4176648, y: 2.6299999}
     adaptiveTilingThreshold: 0.5
     drawMode: 0

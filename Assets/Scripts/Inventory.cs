@@ -116,9 +116,6 @@ public class Inventory : MonoBehaviour
         if (emptyItemSlot.Count == 0)
             return null;
 
-        Transform t = emptyItemSlot.Dequeue();
-        Debug.Log(t.name);
-        return t;
-        //return emptyItemSlot.Dequeue();
+        return emptyItemSlot.Dequeue();
     }
 }
