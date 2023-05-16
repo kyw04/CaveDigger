@@ -70,6 +70,7 @@ public class Player : MonoBehaviour
         SetUI();
     }
 
+    //move
     private void FixedUpdate()
     {
         rb.MovePosition(rb.position + movement.normalized * moveSpeed * Time.deltaTime);
@@ -208,15 +209,7 @@ public class Player : MonoBehaviour
 
     public void SetAbility()
     {
-        Debug.Log("asd");
-    }
-
-    private void OnTriggerStay2D(Collider2D collision)
-    {
-        if (Time.timeScale == 0)
-            return;
-
-
+        Debug.Log("SetAbility");
     }
 
     private void OnDrawGizmos()
