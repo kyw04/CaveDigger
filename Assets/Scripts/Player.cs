@@ -23,6 +23,7 @@ public class Player : MonoBehaviour
     public float damage = 3.5f;
     public float attackRange;
     public float attackSpeed;
+    public float pickupRange = 3f;
 
     private Rigidbody2D rb;
     private Animator anim;
@@ -32,6 +33,7 @@ public class Player : MonoBehaviour
     private float curTime;
     private float pickupTime = 0;
     private float pickupDelay = 1.5f;
+    private GameObject currentPickupItem;
 
     private void Start()
     {
@@ -55,6 +57,8 @@ public class Player : MonoBehaviour
         movement.y = Input.GetAxisRaw("Vertical");
 
         SetDirection();
+
+        ItemPickup();
 
         if (curTime + attackSpeed <= Time.time && Input.GetKeyDown(KeyCode.X))
         {
@@ -138,6 +142,51 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void ItemPickup()
+    {
+        Collider2D[] surroundingItems = Physics2D.OverlapCircleAll(transform.position, pickupRange, LayerMask.GetMask("Item"));
+
+        float minDis = -1;
+        GameObject minDisItem = null;
+        foreach (Collider2D surroundingItem in surroundingItems)
+        {
+            float distance = Mathf.Abs(Vector2.Distance(transform.position, surroundingItem.transform.position));
+
+            if (minDis == -1 || minDis > distance)
+            {
+                minDis = distance;
+                minDisItem = surroundingItem.gameObject;
+            }
+        }
+
+        if (minDisItem != null && currentPickupItem != null)
+        {
+            Debug.Log(minDisItem.name);
+
+            if (Input.GetKey(KeyCode.F) && minDisItem == currentPickupItem)
+            {
+                Debug.Log(pickupTime.ToString("F0"));
+
+                if (pickupTime >= pickupDelay)
+                {
+                    pickupTime = 0f;
+                    minDisItem.GetComponent<Item>().GetItem();
+                }
+
+                pickupTime += Time.deltaTime;
+            }
+            else
+            {
+                currentPickupItem = minDisItem;
+                pickupTime = 0f;
+            }
+        }
+        else
+        {
+            currentPickupItem = minDisItem;
+        }
+    }
+
     private void SetUI()
     {
         healthImage.fillAmount = health / maxHealth;
@@ -156,32 +205,15 @@ public class Player : MonoBehaviour
         if (Time.timeScale == 0)
             return;
 
-        Debug.Log("trigger");
-        if (collision.CompareTag("Pickup"))
-        {
-            if (Input.GetKey(KeyCode.F))
-            {
-                Debug.Log("Get Item");
-                Debug.Log(pickupTime.ToString("F0"));
 
-                if (pickupTime >= pickupDelay)
-                {
-                    pickupTime = 0f;
-                    collision.GetComponent<Item>().GetItem();
-                }
-
-                pickupTime += Time.deltaTime;
-            }
-            else
-            {
-                pickupTime = 0f;
-            }
-        }
     }
 
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireCube(attackBox.transform.position, attackBox.localScale);
+
+        Gizmos.color = Color.gray;
+        Gizmos.DrawWireSphere(transform.position, pickupRange);
     }
 }
