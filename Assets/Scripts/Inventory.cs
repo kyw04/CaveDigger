@@ -12,8 +12,11 @@ public class Inventory : MonoBehaviour
     public Transform[] itemSlots;
     public RectTransform selectImage;
     public GameObject itemExplanationUI;
+    public Image buttonHoldImage;
     [HideInInspector] public GameObject selectedItem;
-    public bool isFull;
+    [HideInInspector] public bool isFull;
+    public float dropTime;
+    public float dropDelay = 1.5f;
 
     private GraphicRaycaster raycaster;
     private PointerEventData pointerEventData;
@@ -23,12 +26,13 @@ public class Inventory : MonoBehaviour
     private TextMeshProUGUI itemRank;
     private TextMeshProUGUI itemExplanation;
     private Item SelectedItemExplanation;
+    private GameObject lastSelectedItem;
 
     private Queue<Transform> emptyItemSlot = new Queue<Transform>();
 
     private void Awake()
     {
-        if (instance == null) instance = this;
+        if (instance == null) { instance = this; }
     }
 
     private void Start()
@@ -88,6 +92,7 @@ public class Inventory : MonoBehaviour
             {
                 selectedItem = result.gameObject;
                 selectImage.position = selectedItem.GetComponent<RectTransform>().position;
+                buttonHoldImage.transform.position = selectImage.position;
             }
         }
 
@@ -102,21 +107,42 @@ public class Inventory : MonoBehaviour
             selectImage.gameObject.SetActive(true);
             itemExplanationUI.SetActive(true);
 
-            if (Input.GetKeyDown(KeyCode.F))
+            if (lastSelectedItem == null || lastSelectedItem != selectedItem)
             {
-                SelectedItemExplanation.PutItem();
-                emptyItemSlot.Enqueue(selectedItem.transform);
+                lastSelectedItem = selectedItem;
+                dropTime = 0f;
+            }
 
-                selectedItem.SetActive(false);
-                selectedItem = null;
-                SelectedItemExplanation = null;
+            if (Input.GetKey(KeyCode.F))
+            {
+                if (dropTime >= dropDelay)
+                {
+                    dropTime = 0f;
+                    SelectedItemExplanation.PutItem();
+                    emptyItemSlot.Enqueue(selectedItem.transform);
+
+                    selectedItem.SetActive(false);
+                    selectedItem = null;
+                    SelectedItemExplanation = null;
+                }
+                else
+                {
+                    dropTime += Time.deltaTime;
+                }
+            }
+            else
+            {
+                dropTime = 0f;
             }
         }
         else
         {
             selectImage.gameObject.SetActive(false);
             itemExplanationUI.SetActive(false);
+            dropTime = 0f;
         }
+
+        buttonHoldImage.fillAmount = dropTime / dropDelay;
     }
 
     public void SelectItemExplanation(Item _item)

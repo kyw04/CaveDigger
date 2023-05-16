@@ -39,7 +39,7 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-        if (instance == null) instance = this;
+        if (instance == null) { instance = this; }
 
         curTime = 0f;
         rb = GetComponent<Rigidbody2D>();
