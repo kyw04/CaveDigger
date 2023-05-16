@@ -12,6 +12,8 @@ public class Player : MonoBehaviour
     public TextMeshProUGUI healthText;
     public Image radiationImage;
     public TextMeshProUGUI radiationText;
+    public GameObject buttonHoldImage;
+    public Image buttonHoldShow;
     public GameObject[] BlockDestroyParticles;
 
     public float maxHealth = 100f;
@@ -144,6 +146,12 @@ public class Player : MonoBehaviour
 
     private void ItemPickup()
     {
+        if (Inventory.instance.isFull)
+        {
+            buttonHoldImage.SetActive(false);
+            return;
+        }
+
         Collider2D[] surroundingItems = Physics2D.OverlapCircleAll(transform.position, pickupRange, LayerMask.GetMask("Item"));
 
         float minDis = -1;
@@ -161,12 +169,12 @@ public class Player : MonoBehaviour
 
         if (minDisItem != null && currentPickupItem != null)
         {
-            Debug.Log(minDisItem.name);
+            buttonHoldImage.SetActive(true);
+            buttonHoldImage.transform.localPosition = minDisItem.transform.position;
 
             if (Input.GetKey(KeyCode.F) && minDisItem == currentPickupItem)
             {
-                Debug.Log(pickupTime.ToString("F0"));
-
+                //Debug.Log(pickupTime.ToString("F0"));
                 if (pickupTime >= pickupDelay)
                 {
                     pickupTime = 0f;
@@ -183,8 +191,11 @@ public class Player : MonoBehaviour
         }
         else
         {
+            buttonHoldImage.SetActive(false);
             currentPickupItem = minDisItem;
+            pickupTime = 0f;
         }
+        buttonHoldShow.fillAmount = pickupTime / pickupDelay;
     }
 
     private void SetUI()

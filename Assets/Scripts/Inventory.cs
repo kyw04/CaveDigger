@@ -13,6 +13,7 @@ public class Inventory : MonoBehaviour
     public RectTransform selectImage;
     public GameObject itemExplanationUI;
     [HideInInspector] public GameObject selectedItem;
+    public bool isFull;
 
     private GraphicRaycaster raycaster;
     private PointerEventData pointerEventData;
@@ -53,6 +54,11 @@ public class Inventory : MonoBehaviour
 
     private void Update()
     {
+        if (emptyItemSlot.Count == 0)
+            isFull = true;
+        else
+            isFull = false;
+
         if (Input.GetKeyDown(KeyCode.Tab) || (Input.GetKeyDown(KeyCode.Escape) && inventoryUI.activeSelf))
         {
             inventoryUI.SetActive(!inventoryUI.activeSelf);
@@ -120,7 +126,7 @@ public class Inventory : MonoBehaviour
 
     public Transform GetItemSlot()
     {
-        if (emptyItemSlot.Count == 0)
+        if (isFull == true)
             return null;
 
         return emptyItemSlot.Dequeue();
