@@ -793,7 +793,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -1163,7 +1163,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -1706,14 +1706,24 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 374632528637682849, guid: 4a8062c74152fe443b6ad0500a552793,
         type: 3}
+      propertyPath: rank
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 374632528637682849, guid: 4a8062c74152fe443b6ad0500a552793,
+        type: 3}
       propertyPath: sprite
       value: 
       objectReference: {fileID: 21300000, guid: 65c65d7dd7711824ba0b5bcf104653ae,
         type: 3}
     - target: {fileID: 374632528637682849, guid: 4a8062c74152fe443b6ad0500a552793,
         type: 3}
+      propertyPath: itemName
+      value: Asteroid
+      objectReference: {fileID: 0}
+    - target: {fileID: 374632528637682849, guid: 4a8062c74152fe443b6ad0500a552793,
+        type: 3}
       propertyPath: explanation
-      value: asd
+      value: damage +3
       objectReference: {fileID: 0}
     - target: {fileID: 839093774292432149, guid: 4a8062c74152fe443b6ad0500a552793,
         type: 3}
@@ -3153,6 +3163,35 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 374632528637682849, guid: 4a8062c74152fe443b6ad0500a552793,
+        type: 3}
+      propertyPath: rank
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 374632528637682849, guid: 4a8062c74152fe443b6ad0500a552793,
+        type: 3}
+      propertyPath: sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: a466ce28b563c884bb32f8f50910c938,
+        type: 3}
+    - target: {fileID: 374632528637682849, guid: 4a8062c74152fe443b6ad0500a552793,
+        type: 3}
+      propertyPath: itemName
+      value: Bee
+      objectReference: {fileID: 0}
+    - target: {fileID: 374632528637682849, guid: 4a8062c74152fe443b6ad0500a552793,
+        type: 3}
+      propertyPath: explanation
+      value: 'Damage +10
+
+'
+      objectReference: {fileID: 0}
+    - target: {fileID: 839093774292432149, guid: 4a8062c74152fe443b6ad0500a552793,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: a466ce28b563c884bb32f8f50910c938,
+        type: 3}
     - target: {fileID: 4774342643382126951, guid: 4a8062c74152fe443b6ad0500a552793,
         type: 3}
       propertyPath: m_Name
@@ -4586,6 +4625,33 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 374632528637682849, guid: 4a8062c74152fe443b6ad0500a552793,
+        type: 3}
+      propertyPath: rank
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 374632528637682849, guid: 4a8062c74152fe443b6ad0500a552793,
+        type: 3}
+      propertyPath: sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 92310cd8fa26e9f42880da58d0c61974,
+        type: 3}
+    - target: {fileID: 374632528637682849, guid: 4a8062c74152fe443b6ad0500a552793,
+        type: 3}
+      propertyPath: itemName
+      value: Boom
+      objectReference: {fileID: 0}
+    - target: {fileID: 374632528637682849, guid: 4a8062c74152fe443b6ad0500a552793,
+        type: 3}
+      propertyPath: explanation
+      value: Boom!
+      objectReference: {fileID: 0}
+    - target: {fileID: 839093774292432149, guid: 4a8062c74152fe443b6ad0500a552793,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 92310cd8fa26e9f42880da58d0c61974,
+        type: 3}
     - target: {fileID: 4774342643382126951, guid: 4a8062c74152fe443b6ad0500a552793,
         type: 3}
       propertyPath: m_Name

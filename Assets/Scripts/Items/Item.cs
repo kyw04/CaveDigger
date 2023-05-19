@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEditor.Progress;
 
 public enum Rank
 {
@@ -19,7 +20,8 @@ public abstract class Item : MonoBehaviour
     public string explanation;
     public GameObject itemPrefab;
 
-    private Transform itemSlot;
+    public int itemSlotIndex;
+    private Transform UIItemSlot;
     private SpriteRenderer spriteRenderer;
     private BoxCollider2D itemCollider;
 
@@ -38,34 +40,25 @@ public abstract class Item : MonoBehaviour
             return;
 
         RunItem();
-        SelectedItem();
-    }
-
-    public void SelectedItem()
-    {
-        GameObject selectedItem = GameManager.instance.inventory.selectedItem;
-        if (selectedItem != null && selectedItem == itemSlot.gameObject)
-        {
-            GameManager.instance.inventory.SelectItemExplanation(this);
-        }
     }
 
     public void GetItem()
     {
-        itemSlot = GameManager.instance.inventory.GetItemSlot();
-        if (itemSlot == null)
+        UIItemSlot = GameManager.instance.inventory.GetItemSlot();
+        if (UIItemSlot == null)
             return;
 
-        itemSlot.GetComponent<Image>().sprite = sprite;
-        itemSlot.gameObject.SetActive(true);
+        UIItemSlot.GetComponent<Image>().sprite = sprite;
+        UIItemSlot.gameObject.SetActive(true);
         spriteRenderer.enabled = false;
         itemCollider.enabled = false;
         transform.SetParent(GameManager.instance.player.transform);
+        itemSlotIndex = GameManager.instance.inventory.fullItemSlot.Count - 1;
     }
 
     public void PutItem()
     {
-        itemSlot = null;
+        UIItemSlot = null;
         transform.parent = null;
         transform.position = GameManager.instance.player.transform.position;
         transform.localScale = Vector3.one;

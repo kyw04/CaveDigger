@@ -32,8 +32,8 @@ public class Player : MonoBehaviour
     private Vector3 attackBoxDir;
     private Vector3 startScale;
     private float curTime;
-    private float pickupTime = 0;
-    private float pickupDelay = 1.5f;
+    private float pickupTime = 0f;
+    private float pickupDelay = 0f; //1.5f;
     private GameObject currentPickupItem;
 
     private const float DEFAULT_MOVEMENT_SPEED = 5f;
