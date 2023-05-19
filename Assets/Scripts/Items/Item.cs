@@ -43,16 +43,16 @@ public abstract class Item : MonoBehaviour
 
     public void SelectedItem()
     {
-        GameObject selectedItem = Inventory.instance.selectedItem;
+        GameObject selectedItem = GameManager.instance.inventory.selectedItem;
         if (selectedItem != null && selectedItem == itemSlot.gameObject)
         {
-            Inventory.instance.SelectItemExplanation(this);
+            GameManager.instance.inventory.SelectItemExplanation(this);
         }
     }
 
     public void GetItem()
     {
-        itemSlot = Inventory.instance.GetItemSlot();
+        itemSlot = GameManager.instance.inventory.GetItemSlot();
         if (itemSlot == null)
             return;
 
@@ -60,14 +60,14 @@ public abstract class Item : MonoBehaviour
         itemSlot.gameObject.SetActive(true);
         spriteRenderer.enabled = false;
         itemCollider.enabled = false;
-        transform.SetParent(Player.instance.transform);
+        transform.SetParent(GameManager.instance.player.transform);
     }
 
     public void PutItem()
     {
         itemSlot = null;
         transform.parent = null;
-        transform.position = Player.instance.transform.position;
+        transform.position = GameManager.instance.player.transform.position;
         transform.localScale = Vector3.one;
         spriteRenderer.enabled = true;
         itemCollider.enabled = true;

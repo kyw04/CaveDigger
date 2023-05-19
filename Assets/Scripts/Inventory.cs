@@ -30,11 +30,6 @@ public class Inventory : MonoBehaviour
 
     private Queue<Transform> emptyItemSlot = new Queue<Transform>();
 
-    private void Awake()
-    {
-        if (instance == null) { instance = this; }
-    }
-
     private void Start()
     {
         inventoryUI.SetActive(false);
@@ -68,9 +63,9 @@ public class Inventory : MonoBehaviour
             inventoryUI.SetActive(!inventoryUI.activeSelf);
 
             if (inventoryUI.activeSelf)
-                Time.timeScale = 0f;
+                GameManager.instance.playerTimeScale = 0f;
             else
-                Time.timeScale = 1f;
+                GameManager.instance.playerTimeScale = 1f;
         }
 
         if (!inventoryUI.activeSelf)

@@ -5,8 +5,6 @@ using TMPro;
 
 public class Player : MonoBehaviour
 {
-    public static Player instance;
-
     public Transform attackBox;
     public Image healthImage;
     public TextMeshProUGUI healthText;
@@ -37,10 +35,10 @@ public class Player : MonoBehaviour
     private float pickupDelay = 1.5f;
     private GameObject currentPickupItem;
 
+    private const float DEFAULT_MOVEMENT_SPEED = 5f;
+
     private void Start()
     {
-        if (instance == null) { instance = this; }
-
         curTime = 0f;
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponentInChildren<Animator>();
@@ -50,10 +48,12 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        if (Time.timeScale == 0f)
+        anim.speed = GameManager.instance.playerTimeScale * moveSpeed / DEFAULT_MOVEMENT_SPEED;
+
+        if (GameManager.instance.playerTimeScale == 0f)
             return;
 
-        radiation += radiationSpeed * Time.deltaTime;
+        radiation += radiationSpeed * Time.deltaTime * GameManager.instance.playerTimeScale;
 
         movement.x = Input.GetAxisRaw("Horizontal");
         movement.y = Input.GetAxisRaw("Vertical");
@@ -73,7 +73,7 @@ public class Player : MonoBehaviour
     //move
     private void FixedUpdate()
     {
-        rb.MovePosition(rb.position + movement.normalized * moveSpeed * Time.deltaTime);
+        rb.MovePosition(rb.position + movement.normalized * moveSpeed * Time.deltaTime * GameManager.instance.playerTimeScale);
     }
 
     private void SetDirection()
@@ -147,7 +147,7 @@ public class Player : MonoBehaviour
 
     private void ItemPickup()
     {
-        if (Inventory.instance.isFull)
+        if (GameManager.instance.inventory.isFull)
         {
             buttonHoldImage.SetActive(false);
             return;
@@ -182,7 +182,7 @@ public class Player : MonoBehaviour
                     minDisItem.GetComponent<Item>().GetItem();
                 }
 
-                pickupTime += Time.deltaTime;
+                pickupTime += Time.deltaTime * GameManager.instance.playerTimeScale;
             }
             else
             {
