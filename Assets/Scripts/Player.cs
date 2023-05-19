@@ -25,6 +25,7 @@ public class Player : MonoBehaviour
     public float attackSpeed;
     public float pickupRange = 3f;
 
+    private TimeManager timeManager;
     private Rigidbody2D rb;
     private Animator anim;
     private Vector2 movement;
@@ -39,6 +40,7 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
+        timeManager = GetComponent<TimeManager>();
         curTime = 0f;
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponentInChildren<Animator>();
@@ -48,12 +50,12 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        anim.speed = GameManager.instance.playerTimeScale * moveSpeed / DEFAULT_MOVEMENT_SPEED;
+        anim.speed = timeManager.scale * moveSpeed / DEFAULT_MOVEMENT_SPEED;
 
-        if (GameManager.instance.playerTimeScale == 0f)
+        if (timeManager.scale == 0f)
             return;
 
-        radiation += radiationSpeed * Time.deltaTime * GameManager.instance.playerTimeScale;
+        radiation += radiationSpeed * timeManager.deltaTime;
 
         movement.x = Input.GetAxisRaw("Horizontal");
         movement.y = Input.GetAxisRaw("Vertical");
@@ -73,7 +75,7 @@ public class Player : MonoBehaviour
     //move
     private void FixedUpdate()
     {
-        rb.MovePosition(rb.position + movement.normalized * moveSpeed * Time.deltaTime * GameManager.instance.playerTimeScale);
+        rb.MovePosition(rb.position + movement.normalized * moveSpeed * timeManager.deltaTime);
     }
 
     private void SetDirection()
@@ -182,7 +184,7 @@ public class Player : MonoBehaviour
                     minDisItem.GetComponent<Item>().GetItem();
                 }
 
-                pickupTime += Time.deltaTime * GameManager.instance.playerTimeScale;
+                pickupTime += Time.deltaTime * timeManager.scale;
             }
             else
             {

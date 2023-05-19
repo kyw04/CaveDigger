@@ -63,9 +63,9 @@ public class Inventory : MonoBehaviour
             inventoryUI.SetActive(!inventoryUI.activeSelf);
 
             if (inventoryUI.activeSelf)
-                GameManager.instance.playerTimeScale = 0f;
+                GameManager.instance.playerTime.scale = 0f;
             else
-                GameManager.instance.playerTimeScale = 1f;
+                GameManager.instance.playerTime.scale = 1f;
         }
 
         if (!inventoryUI.activeSelf)
