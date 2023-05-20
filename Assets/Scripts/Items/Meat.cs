@@ -6,6 +6,6 @@ public class Meat : Item
 
     public override void RunItem()
     {
-        GameManager.instance.player.SetAbility();
+        player.SetAbility();
     }
 }

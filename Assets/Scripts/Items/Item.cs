@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEditor.Progress;
 
 public enum Rank
 {
@@ -20,15 +19,17 @@ public abstract class Item : MonoBehaviour
     public string explanation;
     public GameObject itemPrefab;
 
-    public int itemSlotIndex;
-    private Transform UIItemSlot;
+    private Slot itemSlot;
     private SpriteRenderer spriteRenderer;
     private BoxCollider2D itemCollider;
+
+    protected Player player;
 
     public abstract void RunItem();
 
     private void Start()
     {
+        player = GameManager.instance.player;
         spriteRenderer = GetComponent<SpriteRenderer>();
         itemCollider = GetComponent<BoxCollider2D>();
         SetRank();
@@ -44,26 +45,28 @@ public abstract class Item : MonoBehaviour
 
     public void GetItem()
     {
-        UIItemSlot = GameManager.instance.inventory.GetItemSlot();
-        if (UIItemSlot == null)
+        itemSlot = GameManager.instance.inventory.GetItemSlot();
+        if (itemSlot == null)
             return;
+        //Debug.Log("get item");
 
-        UIItemSlot.GetComponent<Image>().sprite = sprite;
-        UIItemSlot.gameObject.SetActive(true);
+        GameManager.instance.inventory.items.Add(this);
+        itemSlot.item = this;
+        itemSlot.GetComponent<Image>().sprite = sprite;
+        itemSlot.gameObject.SetActive(true);
         spriteRenderer.enabled = false;
         itemCollider.enabled = false;
         transform.SetParent(GameManager.instance.player.transform);
-        itemSlotIndex = GameManager.instance.inventory.fullItemSlot.Count - 1;
     }
 
     public void PutItem()
     {
-        UIItemSlot = null;
+        itemSlot = null;
         transform.parent = null;
-        transform.position = GameManager.instance.player.transform.position;
-        transform.localScale = Vector3.one;
         spriteRenderer.enabled = true;
         itemCollider.enabled = true;
+        transform.localScale = Vector3.one;
+        transform.position = GameManager.instance.player.transform.position;
     }
 
     private void SetRank()

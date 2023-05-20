@@ -1,15 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 public class Player : MonoBehaviour
 {
     public Transform attackBox;
-    public Image healthImage;
-    public TextMeshProUGUI healthText;
-    public Image radiationImage;
-    public TextMeshProUGUI radiationText;
     public GameObject buttonHoldImage;
     public Image buttonHoldShow;
     public GameObject[] BlockDestroyParticles;
@@ -24,27 +19,30 @@ public class Player : MonoBehaviour
     public float attackRange;
     public float attackSpeed;
     public float pickupRange = 3f;
+    [HideInInspector] public Vector3 AttackDirection;
+
 
     private TimeManager timeManager;
     private Rigidbody2D rb;
     private Animator anim;
     private Vector2 movement;
-    private Vector3 attackBoxDir;
     private Vector3 startScale;
     private float curTime;
     private float pickupTime = 0f;
-    private float pickupDelay = 0f; //1.5f;
+    private float pickupDelay;
     private GameObject currentPickupItem;
 
     private const float DEFAULT_MOVEMENT_SPEED = 5f;
 
     private void Start()
     {
+        pickupDelay = GameManager.instance.itemUseDelay;
+
         timeManager = GetComponent<TimeManager>();
         curTime = 0f;
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponentInChildren<Animator>();
-        attackBoxDir = Vector3.up;
+        AttackDirection = Vector3.up;
         startScale = transform.lossyScale;
     }
 
@@ -69,7 +67,7 @@ public class Player : MonoBehaviour
             Attack();
         }
 
-        SetUI();
+        GameManager.instance.SetUI();
     }
 
     //move
@@ -89,20 +87,20 @@ public class Player : MonoBehaviour
             anim.SetFloat("LastHorizontal", movement.x);
             anim.SetFloat("LastVertical", movement.y);
 
-            attackBoxDir = Vector3.zero;
+            AttackDirection = Vector3.zero;
             Vector3 newScale = startScale;
             if (movement.y != 0)
             {
-                attackBoxDir.y = movement.y;
+                AttackDirection.y = movement.y;
             }
             else
             {
-                attackBoxDir.x = movement.x;
+                AttackDirection.x = movement.x;
                 newScale.x = movement.x;
             }
             transform.localScale = newScale;
         }
-        attackBox.position = transform.position + attackBoxDir * attackRange;
+        attackBox.position = transform.position + AttackDirection * attackRange;
     }
 
     private void Attack()
@@ -156,6 +154,7 @@ public class Player : MonoBehaviour
         }
 
         Collider2D[] surroundingItems = Physics2D.OverlapCircleAll(transform.position, pickupRange, LayerMask.GetMask("Item"));
+        //Debug.Log($"Surrounding Items Count: {surroundingItems.Length}");
 
         float minDis = -1;
         GameObject minDisItem = null;
@@ -199,14 +198,6 @@ public class Player : MonoBehaviour
             pickupTime = 0f;
         }
         buttonHoldShow.fillAmount = pickupTime / pickupDelay;
-    }
-
-    private void SetUI()
-    {
-        healthImage.fillAmount = health / maxHealth;
-        healthText.text = health.ToString() + " / " + maxHealth.ToString();
-        radiationImage.fillAmount = radiation / maxRadiation;
-        radiationText.text = (radiation / maxRadiation * 100f).ToString("F2") + "%";
     }
 
     public void SetAbility()

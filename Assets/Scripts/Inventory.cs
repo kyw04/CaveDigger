@@ -3,8 +3,6 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
-using System.Numerics;
-using Unity.VisualScripting;
 
 public class Inventory : MonoBehaviour
 {
@@ -15,10 +13,7 @@ public class Inventory : MonoBehaviour
     public RectTransform selectImage;
     public GameObject itemExplanationUI;
     public Image buttonHoldImage;
-    [HideInInspector] public Slot selectedItem;
     [HideInInspector] public bool isFull;
-    public float dropTime;
-    public float dropDelay = 1.5f;
 
     private GraphicRaycaster raycaster;
     private PointerEventData pointerEventData;
@@ -27,17 +22,23 @@ public class Inventory : MonoBehaviour
     private TextMeshProUGUI itemName;
     private TextMeshProUGUI itemRank;
     private TextMeshProUGUI itemExplanation;
-    private Item SelectedItemExplanation;
-    private GameObject lastSelectedItem;
+    private Slot lastSelectedItemSlot;
+    private Vector2 lastMousePosition;
+    private float dropTime;
+    private float dropDelay;
+    private int selectedItemSlotIndex;
 
-    private Queue<Slot> emptyItemSlot = new Queue<Slot>();
-    public List<Slot> fullItemSlot = new List<Slot>();
-    public List<Item> items = new List<Item>();
-    private int selectedItemIndex;
+    private SortedList<int, Slot> emptyItemSlot = new SortedList<int, Slot>();
+    [HideInInspector] public List<Slot> fullItemSlot = new List<Slot>();
+    [HideInInspector] public List<Item> items = new List<Item>();
 
     private void Start()
     {
         inventoryUI.SetActive(false);
+
+        lastMousePosition = Vector2.zero;
+
+        dropDelay = GameManager.instance.itemUseDelay;
 
         raycaster = GetComponent<GraphicRaycaster>();
         eventSystem = GetComponent<EventSystem>();
@@ -49,10 +50,17 @@ public class Inventory : MonoBehaviour
 
         foreach (Slot slot in itemSlots)
         {
-            if (slot.itemIndex == -1)
+            bool isFullSlot = false; 
+            foreach (Slot fullSlot in fullItemSlot)
             {
-                emptyItemSlot.Enqueue(slot);
+                if (slot == fullSlot)
+                {
+                    isFullSlot = true;
+                }
             }
+
+            if (!isFullSlot)
+                emptyItemSlot.Add(slot.index, slot);
         }
     }
 
@@ -68,92 +76,51 @@ public class Inventory : MonoBehaviour
             inventoryUI.SetActive(!inventoryUI.activeSelf);
 
             if (inventoryUI.activeSelf)
+            {
+                //ResetIventory();
                 GameManager.instance.playerTime.scale = 0f;
+            }
             else
+            {
                 GameManager.instance.playerTime.scale = 1f;
+            }
         }
 
         if (!inventoryUI.activeSelf)
         {
-            selectedItem = null;
-            selectedItemIndex = -1;
+            selectedItemSlotIndex = -1;
             return;
         }
 
-        ResetIventory();
-
-        pointerEventData = new PointerEventData(eventSystem);
-        pointerEventData.position = Input.mousePosition;
-
-        List<RaycastResult> results = new List<RaycastResult>();
-        raycaster.Raycast(pointerEventData, results);
-        foreach (RaycastResult result in results)
+        Slot selectedItemSlot = ItemSelect();
+        if (selectedItemSlot != null)
         {
-            if (result.gameObject.CompareTag("GameController"))
-            {
-                selectedItem = result.gameObject.GetComponent<Slot>();
-            }
-        }
-
-        float horizontal = Input.GetAxisRaw("Horizontal");
-        float vertical = Input.GetAxisRaw("Vertical");
-        int newIndex;
-        if (horizontal != 0 && Input.GetButtonDown("Horizontal"))
-        {
-            newIndex = selectedItemIndex + (int)horizontal;
-            if (newIndex < 0)
-            {
-                selectedItemIndex = fullItemSlot.Count - 1;
-            }
-            else
-            {
-                selectedItemIndex = newIndex % fullItemSlot.Count;
-            }
-        }
-        if (vertical != 0 && Input.GetButtonDown("Vertical"))
-        {
-            newIndex = selectedItemIndex + (int)vertical * -3;
-            if (newIndex < 0)
-            {
-                selectedItemIndex = fullItemSlot.Count + newIndex;
-            }
-            else
-            {
-                selectedItemIndex = newIndex % fullItemSlot.Count;
-            }
-        }
-
-        if (selectedItemIndex != -1)
-        {
-            selectedItem = fullItemSlot[selectedItemIndex];
-        }
-
-        if (selectedItem != null && SelectedItemExplanation != null)
-        {
-            selectImage.position = selectedItem.GetComponent<RectTransform>().position;
+            selectImage.position = selectedItemSlot.GetComponent<RectTransform>().position;
             buttonHoldImage.transform.position = selectImage.position;
-            itemImage.sprite = SelectedItemExplanation.sprite;
-            itemName.text = SelectedItemExplanation.itemName;
-            itemRank.text = SelectedItemExplanation.rankText;
-            itemRank.color = SelectedItemExplanation.rankColor;
-            itemExplanation.text = SelectedItemExplanation.explanation;
+            itemImage.sprite = selectedItemSlot.item.sprite;
+            itemName.text = selectedItemSlot.item.itemName;
+            itemRank.text = selectedItemSlot.item.rankText;
+            itemRank.color = selectedItemSlot.item.rankColor;
+            itemExplanation.text = selectedItemSlot.item.explanation;
 
             selectImage.gameObject.SetActive(true);
             itemExplanationUI.SetActive(true);
 
-            if (lastSelectedItem == null || lastSelectedItem != selectedItem)
+            if (lastSelectedItemSlot == null || lastSelectedItemSlot != selectedItemSlot)
             {
-                lastSelectedItem = selectedItem.gameObject;
+                lastSelectedItemSlot = selectedItemSlot;
+                //Debug.Log("lastSelectedItemSlot != selectedItemSlot");
                 dropTime = 0f;
             }
 
             if (Input.GetKey(KeyCode.F))
-            {
+            { 
+                //Debug.Log($"Drop Tiem: " + dropTime.ToString("F1"));
                 if (dropTime >= dropDelay)
                 {
                     dropTime = 0f;
-                    SelectedItemExplanation = DropItem(selectedItem, true);
-                    selectedItem = null;
+                    selectedItemSlot.item = DropItem(selectedItemSlot, true);
+                    ResetIventory();
                 }
                 else
                 {
@@ -162,75 +129,139 @@ public class Inventory : MonoBehaviour
             }
             else
             {
+                //Debug.Log("No Key Pressed");
                 dropTime = 0f;
             }
         }
         else
         {
-            SelectedItemExplanation = SelectItem(selectedItem);
             selectImage.gameObject.SetActive(false);
             itemExplanationUI.SetActive(false);
+
+            //Debug.Log("!(selectedItemSlot != null && selectedItemSlot.item != null)");
             dropTime = 0f;
         }
 
         buttonHoldImage.fillAmount = dropTime / dropDelay;
     }
 
-    private void ResetIventory()
+    private Slot ItemSelect()
     {
-        while (fullItemSlot.Count > 0)
+        Vector2 currentMousePosition = Input.mousePosition;
+        if (currentMousePosition != lastMousePosition)
         {
-            items.Remove(DropItem(fullItemSlot[0], false));
-        }
+            lastMousePosition = currentMousePosition;
+            pointerEventData = new PointerEventData(eventSystem);
+            pointerEventData.position = Input.mousePosition;
 
-        while (items.Count > 0)
-        {
-            //Item itme = items.Dequeue();
-            //itme.GetItem();
-        }
-    }
+            List<RaycastResult> results = new List<RaycastResult>();
+            raycaster.Raycast(pointerEventData, results);
 
-    public Item SelectItem(Slot _slot)
-    {
-        Item selectedItem = null;
-        foreach (Item item in items)
-        {
-            if (item.itemSlotIndex == _slot.itemIndex)
+            foreach (RaycastResult result in results)
             {
-                selectedItem = item;
-                break;
+                if (result.gameObject.CompareTag("GameController"))
+                {
+                    selectedItemSlotIndex = result.gameObject.GetComponent<Slot>().index;
+                }
             }
         }
-        return selectedItem;
+
+        if (fullItemSlot.Count > 0)
+        {
+            float horizontal = Input.GetAxisRaw("Horizontal");
+            float vertical = Input.GetAxisRaw("Vertical");
+            int newIndex;
+            if (selectedItemSlotIndex != -1)
+            {
+                if (Input.GetButtonDown("Horizontal"))
+                {
+                    newIndex = selectedItemSlotIndex + (int)horizontal;
+                    if (newIndex < 0)
+                    {
+                        selectedItemSlotIndex = fullItemSlot.Count - 1;
+                    }
+                    else
+                    {
+                        selectedItemSlotIndex = newIndex % fullItemSlot.Count;
+                    }
+                }
+                if (Input.GetButtonDown("Vertical"))
+                {
+
+                    newIndex = selectedItemSlotIndex + (int)vertical * -3;
+                    if (newIndex < 0)
+                    {
+                        selectedItemSlotIndex = fullItemSlot.Count + newIndex;
+                    }
+                    else
+                    {
+                        selectedItemSlotIndex = newIndex % fullItemSlot.Count;
+                    }
+                }
+            }
+            else if (horizontal != 0 || vertical != 0)
+            {
+                selectedItemSlotIndex = 0;
+            }
+        }
+
+        if (selectedItemSlotIndex != -1)
+        {
+            return fullItemSlot[selectedItemSlotIndex];
+        }
+
+        return null;
     }
 
-    private Item DropItem(Slot _item, bool itemRespawn)
+    private void ResetIventory()
     {
-        selectedItem = _item;
-        Slot _itemSlot = _item.GetComponent<Slot>();
+        Queue<Item> resetItems = new Queue<Item>();
+        while (fullItemSlot.Count > 0)
+        {
+            resetItems.Enqueue(DropItem(fullItemSlot[0], false));
+        }
 
-        Item selectItem = SelectItem(_itemSlot);
-        emptyItemSlot.Enqueue(_itemSlot);
-        fullItemSlot.Remove(_itemSlot);
+        //Debug.Log($"resetItems count: {resetItems.Count}");
+        while (resetItems.Count > 0)
+        {
+            Item item = resetItems.Dequeue();
+            //Debug.Log($"resetItems name: {item.name}");
+            item.GetItem();
+        }
+    }
 
-        _item.gameObject.SetActive(false);
+    private Item DropItem(Slot itemSlot, bool itemRespawn)
+    {
+        selectedItemSlotIndex = -1;
+
+        emptyItemSlot.Add(itemSlot.index, itemSlot);
+        isFull = false;
+        fullItemSlot.Remove(itemSlot);
+        itemSlot.gameObject.SetActive(false);
+
+        Item selectItem = itemSlot.item;
+        itemSlot.item = null;
+        items.Remove(selectItem);
         if (itemRespawn)
         {
             selectItem.PutItem();
             return null;
         }
 
+        //Debug.Log($"drop itme name: {selectItem.name}");
         return selectItem;
     }
 
-    public Transform GetItemSlot()
+    public Slot GetItemSlot()
     {
         if (isFull == true)
             return null;
 
-        Slot itemSlot = emptyItemSlot.Dequeue();
+        Slot itemSlot = emptyItemSlot.Values[0];
+        emptyItemSlot.RemoveAt(0);
         fullItemSlot.Add(itemSlot);
-        itemSlot.itemIndex = fullItemSlot.Count - 1;
-        return itemSlot.gameObject.transform;
+
+        //Debug.Log("get item slot");
+        return itemSlot;
     }
 }
