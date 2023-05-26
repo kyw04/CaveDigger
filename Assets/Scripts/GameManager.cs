@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour
     public void SetUI()
     {
         playerHealthImage.fillAmount = player.realStats.health / player.realStats.maxHealth;
-        playerHealthText.text = player.realStats.health.ToString() + " / " + player.realStats.maxHealth.ToString();
+        playerHealthText.text = player.realStats.health.ToString("F0") + " / " + player.realStats.maxHealth.ToString("F0");
         playerRadiationImage.fillAmount = player.realStats.radiation / player.realStats.maxRadiation;
         playerRadiationText.text = (player.realStats.radiation / player.realStats.maxRadiation * 100f).ToString("F2") + "%";
     }
