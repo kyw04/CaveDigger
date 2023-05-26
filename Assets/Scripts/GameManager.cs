@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     public Inventory inventory;
     public float itemUseDelay = 1.5f;
 
+
     private void Awake()
     {
         if (instance == null) { instance = this; }
@@ -22,9 +23,9 @@ public class GameManager : MonoBehaviour
 
     public void SetUI()
     {
-        playerHealthImage.fillAmount = player.health / player.maxHealth;
-        playerHealthText.text = player.health.ToString() + " / " + player.maxHealth.ToString();
-        playerRadiationImage.fillAmount = player.radiation / player.maxRadiation;
-        playerRadiationText.text = (player.radiation / player.maxRadiation * 100f).ToString("F2") + "%";
+        playerHealthImage.fillAmount = player.realStats.health / player.realStats.maxHealth;
+        playerHealthText.text = player.realStats.health.ToString() + " / " + player.realStats.maxHealth.ToString();
+        playerRadiationImage.fillAmount = player.realStats.radiation / player.realStats.maxRadiation;
+        playerRadiationText.text = (player.realStats.radiation / player.realStats.maxRadiation * 100f).ToString("F2") + "%";
     }
 }

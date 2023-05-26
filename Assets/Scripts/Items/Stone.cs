@@ -10,7 +10,7 @@ public class Stone : Item
 
     public override void RunItem()
     {
-        damage = player.damage;
+        damage = player.realStats.damage;
         if (lastUseTime + itemDelay <= Time.time)
         {
             if (Input.GetKeyDown(KeyCode.X))

@@ -1,3 +1,4 @@
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 
 public class Meat : Item
@@ -6,6 +7,6 @@ public class Meat : Item
 
     public override void RunItem()
     {
-        player.SetAbility();
+        stats.maxHealth = 10f;
     }
 }

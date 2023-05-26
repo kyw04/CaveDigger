@@ -1,6 +1,47 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+
+[Serializable]
+public struct Stats
+{
+    public float maxHealth;// = 100f;
+    public float health;// = 100f;
+    public float maxRadiation;// = 100;
+    public float radiation;// = 0f;
+    public float radiationSpeed;// = 0.005f;
+    public float moveSpeed;// = 5f;
+    public float damage;// = 3.5f;
+    public float attackRange;// = 1f;
+    public float attackSpeed;// = 1.5f;
+
+    public void Add(Stats stats)
+    {
+        this.maxHealth += stats.maxHealth;
+        this.health += stats.health;
+        this.maxRadiation += stats.maxRadiation;
+        this.radiation += stats.radiation;
+        this.radiationSpeed += stats.radiationSpeed;
+        this.moveSpeed += stats.moveSpeed;
+        this.damage += stats.damage;
+        this.attackRange += stats.attackRange;
+        this.attackSpeed += stats.attackSpeed;
+    }
+
+    public void Zero()
+    {
+        this.maxHealth = 0;
+        this.health = 0;
+        this.maxRadiation = 0;
+        this.radiation = 0;
+        this.radiationSpeed = 0;
+        this.moveSpeed = 0;
+        this.damage = 0;
+        this.attackRange = 0;
+        this.attackSpeed = 0;
+    }
+}
 
 public class Player : MonoBehaviour
 {
@@ -8,19 +49,11 @@ public class Player : MonoBehaviour
     public GameObject buttonHoldImage;
     public Image buttonHoldShow;
     public GameObject[] BlockDestroyParticles;
-
-    public float maxHealth = 100f;
-    public float health = 100f;
-    public float maxRadiation = 100;
-    public float radiation = 0f;
-    public float radiationSpeed = 0.5f;
-    public float moveSpeed = 5f;
-    public float damage = 3.5f;
-    public float attackRange;
-    public float attackSpeed;
+    public Stats defaultStats;
+    public Stats realStats;
+    private Stats addStats;
     public float pickupRange = 3f;
     [HideInInspector] public Vector3 AttackDirection;
-
 
     private TimeManager timeManager;
     private Rigidbody2D rb;
@@ -32,7 +65,7 @@ public class Player : MonoBehaviour
     private float pickupDelay;
     private GameObject currentPickupItem;
 
-    private const float DEFAULT_MOVEMENT_SPEED = 5f;
+    private const float defaultMovemetSpeed = 5f;
 
     private void Start()
     {
@@ -48,12 +81,12 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        anim.speed = timeManager.scale * moveSpeed / DEFAULT_MOVEMENT_SPEED;
+        anim.speed = timeManager.scale * realStats.moveSpeed / defaultMovemetSpeed;
 
         if (timeManager.scale == 0f)
             return;
 
-        radiation += radiationSpeed * timeManager.deltaTime;
+        defaultStats.radiation += realStats.radiationSpeed * timeManager.deltaTime;
 
         movement.x = Input.GetAxisRaw("Horizontal");
         movement.y = Input.GetAxisRaw("Vertical");
@@ -62,18 +95,18 @@ public class Player : MonoBehaviour
 
         ItemPickup();
 
-        if (curTime + attackSpeed <= Time.time && Input.GetKeyDown(KeyCode.X))
+        if (curTime + realStats.attackSpeed <= Time.time && Input.GetKeyDown(KeyCode.X))
         {
             Attack();
         }
 
-        GameManager.instance.SetUI();
+        SetAbility();
     }
 
     //move
     private void FixedUpdate()
     {
-        rb.MovePosition(rb.position + movement.normalized * moveSpeed * timeManager.deltaTime);
+        rb.MovePosition(rb.position + movement.normalized * realStats.moveSpeed * timeManager.deltaTime);
     }
 
     private void SetDirection()
@@ -100,7 +133,7 @@ public class Player : MonoBehaviour
             }
             transform.localScale = newScale;
         }
-        attackBox.position = transform.position + AttackDirection * attackRange;
+        attackBox.position = transform.position + AttackDirection * realStats.attackRange;
     }
 
     private void Attack()
@@ -202,7 +235,24 @@ public class Player : MonoBehaviour
 
     public void SetAbility()
     {
-        Debug.Log("SetAbility");
+        //Debug.Log("set ability");
+        float currentHealth = 1;
+        if (realStats.maxHealth > 0)
+            currentHealth = realStats.health / realStats.maxHealth;
+
+        addStats.Zero();
+        realStats.Zero();
+
+        addStats.Add(defaultStats);
+        Item[] items = GetComponentsInChildren<Item>();
+        foreach (Item item in items)
+        {
+            addStats.Add(item.stats);
+        }
+
+        realStats.Add(addStats);
+        realStats.health = realStats.maxHealth * currentHealth;
+        GameManager.instance.SetUI();
     }
 
     private void OnDrawGizmos()

@@ -8,6 +8,7 @@ public enum Rank
 
 public abstract class Item : MonoBehaviour
 {
+    public Stats stats;
     public Sprite sprite;
     public string itemName;
     public Rank rank;
@@ -29,6 +30,7 @@ public abstract class Item : MonoBehaviour
 
     private void Start()
     {
+        stats.Zero();
         player = GameManager.instance.player;
         spriteRenderer = GetComponent<SpriteRenderer>();
         itemCollider = GetComponent<BoxCollider2D>();
