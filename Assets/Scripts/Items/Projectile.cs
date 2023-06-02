@@ -2,13 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Wall : MonoBehaviour
+public class Projectile : MonoBehaviour
 {
+    [HideInInspector] public float damage;
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("NormalSkill"))
-        {
-            Destroy(collision.gameObject);
-        }
+
+        Destroy(this.gameObject);
     }
 }
