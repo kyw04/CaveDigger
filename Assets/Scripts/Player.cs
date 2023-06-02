@@ -213,7 +213,14 @@ public class Player : MonoBehaviour
                 if (pickupTime >= pickupDelay)
                 {
                     pickupTime = 0f;
-                    minDisItem.GetComponent<Item>().GetItem();
+                    if (minDisItem.CompareTag("Pickup"))
+                    {
+                        minDisItem.GetComponent<Item>().GetItem();
+                    }
+                    else if (minDisItem.CompareTag("Chest"))
+                    {
+                        minDisItem.GetComponent<RandomChest>().GetItem();
+                    }
                 }
 
                 pickupTime += Time.deltaTime * timeManager.scale;

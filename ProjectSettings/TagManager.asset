@@ -11,6 +11,7 @@ TagManager:
   - Pickup
   - Wall
   - NormalSkill
+  - Chest
   layers:
   - Default
   - TransparentFX
