@@ -23,6 +23,7 @@ public abstract class Item : MonoBehaviour
     private Slot itemSlot;
     private SpriteRenderer spriteRenderer;
     private BoxCollider2D itemCollider;
+    private Rigidbody2D itemRigidbody;
 
     protected Player player;
 
@@ -34,6 +35,7 @@ public abstract class Item : MonoBehaviour
         player = GameManager.instance.player;
         spriteRenderer = GetComponent<SpriteRenderer>();
         itemCollider = GetComponent<BoxCollider2D>();
+        itemRigidbody = GetComponent<Rigidbody2D>();
         SetRank();
     }
 

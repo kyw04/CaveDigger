@@ -1,55 +1,80 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class Map : MonoBehaviour
 {
+    [Serializable]
+    public struct TopDownSprites
+    {
+        public Sprite[] top;
+        public Sprite[] down;
+        public Sprite[] left;
+        public Sprite[] right;
+    }
+
+    public static Map instance;
+
     public GameObject[] dungeonPrefab;
-    public GameObject[] wallPrefab;
-    public GameObject unbrokenWallPrefab;
+    public SpriteRenderer wallPrefab;
+    public SpriteRenderer unbrokenWallPrefab;
+    public SpriteRenderer floorPrefab;
+    public TopDownSprites wallSprites;
+    public TopDownSprites unbrokenWallSprites;
+    public Sprite[] floorSprites;
     public Vector2 mapSize;
     public int dungeonCount;
     public int startRoomSize;
 
     private List<Transform> dungeonTransform = new List<Transform>();
+
+    private void Awake()
+    {
+        if (instance == null) { instance = this; }
+    }
+
     private void Start()
     {
         for (int i = (int)mapSize.x / -2; i <= mapSize.x / 2; i++)
         {
             for (int j = (int)mapSize.y / -2; j <= mapSize.y / 2; j++)
             {
-                Vector3 pos = new Vector3(i, j, 0);
-                GameObject wall;
+                Vector3 pos = new Vector3(i, j);
+                SpriteRenderer wall;
 
                 if (pos.x <= startRoomSize / 2 && pos.y <= startRoomSize / 2 &&
                     pos.x >= startRoomSize / -2 && pos.y >= startRoomSize / -2)
                 {
-                    continue;
+                    wall = floorPrefab;
+                    wall.sprite = floorSprites[UnityEngine.Random.Range(0, floorSprites.Length)];
                 }
-                if (pos.x == (int)mapSize.x / -2 || pos.x == (int)mapSize.x / 2 ||
+                else if (pos.x == (int)mapSize.x / -2 || pos.x == (int)mapSize.x / 2 ||
                     pos.y == (int)mapSize.y / -2 || pos.y == (int)mapSize.y / 2)
                 {
                     wall = unbrokenWallPrefab;
+                    //wall.sprite = unbrokenWallSprites[UnityEngine.Random.Range(0, unbrokenWallSprites.Length)];
                 }
                 else
                 {
-                    wall = wallPrefab[Random.Range(0, wallPrefab.Length)];
+                    wall = wallPrefab;
+                    //wall.sprite = floorSprites[UnityEngine.Random.Range(0, floorSprites.Length)];
                 }
-                GameObject newWall = Instantiate(wall, pos, Quaternion.identity);
-                newWall.transform.parent = transform;
+                GameObject newWall = Instantiate(wall.gameObject, pos, Quaternion.identity);
+                newWall.transform.parent = this.transform;
             }
         }
 
         for (int i = 0; i < dungeonCount; i++)
         {
             int changeCount = 500;
-            GameObject selectedDungeon = dungeonPrefab[Random.Range(0, dungeonPrefab.Length)];
+            GameObject selectedDungeon = dungeonPrefab[UnityEngine.Random.Range(0, dungeonPrefab.Length)];
             Vector3 pos = Vector3.zero;
             while (pos == Vector3.zero)
             {
                 pos = new Vector3(
-                    Random.Range((int)(mapSize.x / -2 + selectedDungeon.transform.localScale.x / 2), (int)(mapSize.x / 2 - selectedDungeon.transform.localScale.x / 2)),
-                    Random.Range((int)(mapSize.y / -2 + selectedDungeon.transform.localScale.y / 2), (int)(mapSize.y / 2 - selectedDungeon.transform.localScale.y / 2)),
+                    UnityEngine.Random.Range((int)(mapSize.x / -2 + selectedDungeon.transform.localScale.x / 2), (int)(mapSize.x / 2 - selectedDungeon.transform.localScale.x / 2)),
+                    UnityEngine.Random.Range((int)(mapSize.y / -2 + selectedDungeon.transform.localScale.y / 2), (int)(mapSize.y / 2 - selectedDungeon.transform.localScale.y / 2)),
                     0);
                 changeCount--;
 
@@ -87,15 +112,27 @@ public class Map : MonoBehaviour
 
             Transform dungeon = Instantiate(selectedDungeon, pos, Quaternion.identity).transform;
             dungeonTransform.Add(dungeon.transform);
-            Collider2D[] colliders = Physics2D.OverlapBoxAll(dungeon.position, dungeon.localScale, 0);
+            Collider2D[] colliders = Physics2D.OverlapBoxAll(dungeon.position, dungeon.localScale, 0, LayerMask.GetMask("Wall"));
 
             foreach (Collider2D collider in colliders)
             {
-                if (collider.CompareTag("Wall"))
-                {
-                    Destroy(collider.gameObject);
-                }
+                BreakWall(collider.transform);
             }
         }
+    }
+
+    public void BreakWall(Transform brekenObj)
+    {
+        brekenObj.GetComponent<BoxCollider2D>().enabled = false;
+        SpriteRenderer sr = brekenObj.GetComponent<SpriteRenderer>();
+        sr.sprite = floorSprites[UnityEngine.Random.Range(0, floorSprites.Length)];
+        sr.color = Color.white;
+
+        //Collider2D[] colliders = Physics2D.OverlapBoxAll(brekenObj.position, brekenObj.localScale, 0, LayerMask.GetMask("Wall"));
+
+        //foreach (Collider2D collider in colliders)
+        //{
+        //    Debug.Log(collider.name);
+        //}
     }
 }

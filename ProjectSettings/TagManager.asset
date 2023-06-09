@@ -22,8 +22,8 @@ TagManager:
   - Item
   - Player
   - PlayerPickupRange
-  - 
-  - 
+  - Wall
+  - OpenChest
   - 
   - 
   - 

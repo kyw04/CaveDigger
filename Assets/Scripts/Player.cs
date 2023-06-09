@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -43,11 +44,18 @@ public struct Stats
     }
 }
 
+public enum State
+{
+    Idle,
+    Attack
+}
+
 public class Player : MonoBehaviour
 {
     public Transform attackBox;
     public GameObject buttonHoldImage;
     public Image buttonHoldShow;
+    public Animator anim;
     public GameObject[] BlockDestroyParticles;
     public Stats defaultStats;
     public Stats realStats;
@@ -55,15 +63,17 @@ public class Player : MonoBehaviour
     public float pickupRange = 3f;
     [HideInInspector] public Vector3 AttackDirection;
 
+    private State state;
     private TimeManager timeManager;
     private Rigidbody2D rb;
-    private Animator anim;
+    private Animator attackAnim;
     private Vector2 movement;
     private Vector3 startScale;
     private float curTime;
     private float pickupTime = 0f;
     private float pickupDelay;
     private GameObject currentPickupItem;
+    private Vector3 attackBoxStartScale;
 
     private const float defaultMovemetSpeed = 5f;
 
@@ -74,9 +84,10 @@ public class Player : MonoBehaviour
         timeManager = GetComponent<TimeManager>();
         curTime = 0f;
         rb = GetComponent<Rigidbody2D>();
-        anim = GetComponentInChildren<Animator>();
+        attackAnim = attackBox.GetComponent<Animator>();
         AttackDirection = Vector3.up;
         startScale = transform.lossyScale;
+        attackBoxStartScale = attackBox.transform.localScale;
     }
 
     private void Update()
@@ -95,7 +106,8 @@ public class Player : MonoBehaviour
 
         ItemPickup();
 
-        if (curTime + realStats.attackSpeed <= Time.time && Input.GetKeyDown(KeyCode.X))
+        if (curTime + realStats.attackSpeed <= Time.time && 
+            Input.GetKeyDown(KeyCode.X) && state == State.Idle)
         {
             Attack();
         }
@@ -106,11 +118,17 @@ public class Player : MonoBehaviour
     //move
     private void FixedUpdate()
     {
+        if (state != State.Idle)
+            return;
+
         rb.MovePosition(rb.position + movement.normalized * realStats.moveSpeed * timeManager.deltaTime);
     }
 
     private void SetDirection()
     {
+        if (state != State.Idle)
+            return;
+
         anim.SetFloat("Horizontal", movement.x);
         anim.SetFloat("Vertical", movement.y);
         anim.SetFloat("Speed", movement.sqrMagnitude);
@@ -125,10 +143,12 @@ public class Player : MonoBehaviour
             if (movement.y != 0)
             {
                 AttackDirection.y = movement.y;
+                attackBox.localScale = new Vector3(attackBoxStartScale.x, attackBoxStartScale.y, 1);
             }
             else
             {
                 AttackDirection.x = movement.x;
+                attackBox.localScale = new Vector3(attackBoxStartScale.y, attackBoxStartScale.x, 1);
                 newScale.x = movement.x;
             }
             transform.localScale = newScale;
@@ -140,6 +160,11 @@ public class Player : MonoBehaviour
     {
         Debug.Log("attack!");
         curTime = Time.time;
+        state = State.Attack;
+        anim.SetFloat("Speed", 0f);
+        anim.SetTrigger("Attack");
+        attackAnim.SetTrigger("Attack");
+        StartCoroutine(AttackDone(0.4f));
 
         Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(attackBox.transform.position, attackBox.localScale, 0);
         Queue<GameObject> q = new Queue<GameObject>();
@@ -174,8 +199,14 @@ public class Player : MonoBehaviour
         if (minDisWall != null)
         {
             Instantiate(BlockDestroyParticles[0], minDisWall.transform.position, Quaternion.identity);
-            Destroy(minDisWall.gameObject);
+            Map.instance.BreakWall(minDisWall.transform);
         }
+    }
+
+    private IEnumerator AttackDone(float time)
+    {
+        yield return new WaitForSeconds(time);
+        state = State.Idle;
     }
 
     private void ItemPickup()
@@ -205,7 +236,7 @@ public class Player : MonoBehaviour
         if (minDisItem != null && currentPickupItem != null)
         {
             buttonHoldImage.SetActive(true);
-            buttonHoldImage.transform.localPosition = minDisItem.transform.position;
+            buttonHoldImage.transform.localPosition = minDisItem.transform.position + Vector3.up;
 
             if (Input.GetKey(KeyCode.F) && minDisItem == currentPickupItem)
             {
@@ -219,7 +250,7 @@ public class Player : MonoBehaviour
                     }
                     else if (minDisItem.CompareTag("Chest"))
                     {
-                        minDisItem.GetComponent<RandomChest>().GetItem();
+                        minDisItem.GetComponent<RandomChest>().Opening();
                     }
                 }
 

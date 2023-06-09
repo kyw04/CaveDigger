@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1167665653708384348}
   - component: {fileID: 7098839386471586700}
   - component: {fileID: 5736597062939055059}
+  - component: {fileID: -2630793399745619015}
   - component: {fileID: -6863262948796246103}
   m_Layer: 6
   m_Name: StoneItem
@@ -74,7 +75,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 5
   m_Sprite: {fileID: 21300000, guid: e2dfa27e0377cba40ad854d503e978f3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -112,6 +113,27 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!50 &-2630793399745619015
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3125767309932324862}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!114 &-6863262948796246103
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -124,6 +146,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 285a1f0610025ac47ad2379c38b7a728, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  stats:
+    maxHealth: 0
+    health: 0
+    maxRadiation: 0
+    radiation: 0
+    radiationSpeed: 0
+    moveSpeed: 0
+    damage: 0
+    attackRange: 0
+    attackSpeed: 0
   sprite: {fileID: 21300000, guid: e2dfa27e0377cba40ad854d503e978f3, type: 3}
   itemName: Stone
   rank: 1
