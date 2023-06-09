@@ -163,8 +163,7 @@ public class Player : MonoBehaviour
         state = State.Attack;
         anim.SetFloat("Speed", 0f);
         anim.SetTrigger("Attack");
-        attackAnim.SetTrigger("Attack");
-        StartCoroutine(AttackDone(0.4f));
+        StartCoroutine(AttackDone(0.1f));
 
         Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(attackBox.transform.position, attackBox.localScale, 0);
         Queue<GameObject> q = new Queue<GameObject>();
