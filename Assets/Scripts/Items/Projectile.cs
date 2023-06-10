@@ -8,6 +8,7 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Destroy(this.gameObject);
+        if (!collision.CompareTag("Enemy") && !collision.CompareTag("Player"))
+            Destroy(this.gameObject);
     }
 }

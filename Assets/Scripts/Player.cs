@@ -20,7 +20,6 @@ public struct Stats
     public void Add(Stats stats)
     {
         this.maxHealth += stats.maxHealth;
-        this.health += stats.health;
         this.maxRadiation += stats.maxRadiation;
         this.radiation += stats.radiation;
         this.radiationSpeed += stats.radiationSpeed;
@@ -33,7 +32,6 @@ public struct Stats
     public void Zero()
     {
         this.maxHealth = 0;
-        this.health = 0;
         this.maxRadiation = 0;
         this.radiation = 0;
         this.radiationSpeed = 0;
@@ -56,6 +54,7 @@ public class Player : MonoBehaviour
     public GameObject buttonHoldImage;
     public Image buttonHoldShow;
     public Animator anim;
+    public ParticleSystem attackParticle;
     public GameObject[] BlockDestroyParticles;
     public Stats defaultStats;
     public Stats realStats;
@@ -79,6 +78,7 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
+        realStats.health = defaultStats.health;
         pickupDelay = GameManager.instance.itemUseDelay;
 
         timeManager = GetComponent<TimeManager>();
@@ -163,42 +163,32 @@ public class Player : MonoBehaviour
         state = State.Attack;
         anim.SetFloat("Speed", 0f);
         anim.SetTrigger("Attack");
+        attackParticle.transform.position = attackBox.position;
+        attackParticle.Play();
         StartCoroutine(AttackDone(0.1f));
 
         Collider2D[] collider2Ds = Physics2D.OverlapBoxAll(attackBox.transform.position, attackBox.localScale, 0);
-        Queue<GameObject> q = new Queue<GameObject>();
 
         foreach (Collider2D collider in collider2Ds)
         {
-            if (collider.CompareTag("Wall"))
-            {
-                q.Enqueue(collider.gameObject);
-                //Debug.Log("Wall!");
-            }
-            else if (collider.CompareTag("Enemy"))
+            if (collider.CompareTag("Enemy"))
             {
                 Debug.Log("Enemy!");
             }
         }
 
-        float minDis = -1;
-        GameObject minDisWall = null;
-        while (q.Count > 0)
+        Vector2 rayPos = attackBox.localPosition;
+        if (transform.localScale.x == -1f)
         {
-            GameObject wall = q.Dequeue();
-            float distance;
-            distance = Mathf.Abs(Vector2.Distance(wall.transform.position, transform.position));
-            if (minDis == -1 || minDis > distance)
-            {
-                minDis = distance;
-                minDisWall = wall;
-            }
+            rayPos.x = -1f;
         }
 
-        if (minDisWall != null)
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, rayPos, 1f, LayerMask.GetMask("Wall"));
+        Debug.DrawRay(transform.position, rayPos, Color.green, 1f);
+        if (hit)
         {
-            Instantiate(BlockDestroyParticles[0], minDisWall.transform.position, Quaternion.identity);
-            Map.instance.BreakWall(minDisWall.transform);
+            Instantiate(BlockDestroyParticles[0], hit.transform.position, Quaternion.identity);
+            Map.instance.BreakWall(hit.transform);
         }
     }
 
@@ -273,6 +263,7 @@ public class Player : MonoBehaviour
     public void SetAbility()
     {
         //Debug.Log("set ability");
+
         float currentHealth = 1;
         if (realStats.maxHealth > 0)
             currentHealth = realStats.health / realStats.maxHealth;
@@ -281,15 +272,31 @@ public class Player : MonoBehaviour
         realStats.Zero();
 
         addStats.Add(defaultStats);
+
         Item[] items = GetComponentsInChildren<Item>();
         foreach (Item item in items)
         {
             addStats.Add(item.stats);
         }
-
         realStats.Add(addStats);
         realStats.health = realStats.maxHealth * currentHealth;
+        
         GameManager.instance.SetUI();
+    }
+
+    public void OnDamage(float value)
+    {
+        realStats.health -= value;
+    }
+
+    public void Heal(float value)
+    {
+        defaultStats.health += value;
+        
+        if (defaultStats.health > realStats.maxHealth)
+        {
+            defaultStats.health = realStats.maxHealth;
+        }
     }
 
     private void OnDrawGizmos()

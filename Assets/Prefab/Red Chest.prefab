@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 3401664227270576137}
   - component: {fileID: 3401664227270576136}
+  - component: {fileID: 1702106672274409652}
   - component: {fileID: 3401664227270576150}
   - component: {fileID: 7186321177917549393}
-  - component: {fileID: 1702106672274409652}
   m_Layer: 6
   m_Name: Red Chest
   m_TagString: Chest
@@ -87,6 +87,26 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!95 &1702106672274409652
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3401664227270576139}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 7ff97002f77c4ee4bb734087d20bdfab, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!61 &3401664227270576150
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -128,23 +148,8 @@ MonoBehaviour:
   items:
   - {fileID: 4774342643382126951, guid: 4a8062c74152fe443b6ad0500a552793, type: 3}
   - {fileID: 3125767309932324862, guid: 6d69dee3291bd414195ca40dafe80548, type: 3}
---- !u!95 &1702106672274409652
-Animator:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3401664227270576139}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 7ff97002f77c4ee4bb734087d20bdfab, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  - {fileID: 2390544386746652502, guid: 731615e19de2b8c4780ae1f0980b636a, type: 3}
+  - {fileID: 7739169094771755125, guid: 814b0beb7628a3541bff43efbfef3ada, type: 3}
+  - {fileID: 8924199918271365765, guid: 6aef69b006893dc4e94a7578a936cd8d, type: 3}
+  - {fileID: 4203009528062371918, guid: 171fa0423cefdcb4987beb7729c00756, type: 3}
+  - {fileID: 3061247992383693533, guid: 7c85e944a9b0db24ba9b8f8c75e98270, type: 3}
