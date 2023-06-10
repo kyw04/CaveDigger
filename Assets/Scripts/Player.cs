@@ -158,7 +158,7 @@ public class Player : MonoBehaviour
 
     private void Attack()
     {
-        Debug.Log("attack!");
+        //Debug.Log("attack!");
         curTime = Time.time;
         state = State.Attack;
         anim.SetFloat("Speed", 0f);
