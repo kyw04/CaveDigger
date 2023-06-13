@@ -9351,28 +9351,42 @@ MonoBehaviour:
     type: 3}
   floorPrefab: {fileID: 4531852783500256501, guid: fd47e18cef2e0914d980754e181eff24,
     type: 3}
-  wallSprites:
-    top:
-    - {fileID: 21300000, guid: 2361abc5ab770da4fb40ae87af762fb6, type: 3}
-    - {fileID: 21300000, guid: 21a16d99ec04f734da9831c83ae4cee2, type: 3}
-    - {fileID: 21300000, guid: 4d1570c92e31d95468b1688666231d8d, type: 3}
-    - {fileID: 21300000, guid: 9861cf7e6d00e7d4d8d840d3d90c9e0f, type: 3}
-    down:
-    - {fileID: 21300000, guid: 3fb868323b0726d419bce9b8e7251727, type: 3}
-    - {fileID: 21300000, guid: b9c8c44899c9fed40b0fce7c1e3db78f, type: 3}
-    - {fileID: 21300000, guid: 625b61fb183994b4b936f89507b72a5c, type: 3}
-    - {fileID: 21300000, guid: 4abab1c519601dd42be21c90918a1797, type: 3}
-    left:
-    - {fileID: 21300000, guid: d67a195948b85e74083e63df06dd9314, type: 3}
-    - {fileID: 21300000, guid: a42bb71cebebedf49803643290db4638, type: 3}
-    right:
-    - {fileID: 21300000, guid: 273b3bd3a04097b4880c2cd29eb6266a, type: 3}
-    - {fileID: 21300000, guid: e3442bb839b2a164d99620b903bd3a15, type: 3}
   unbrokenWallSprites:
     top: []
     down: []
     left: []
     right: []
+  wallSprites:
+  - {fileID: 21300000, guid: 97b15869287823444a3736859b6253a4, type: 3}
+  - {fileID: 21300000, guid: 142ee856b63627040925292682d27ede, type: 3}
+  - {fileID: 21300000, guid: 04066e8966398624eb155738ecc4164a, type: 3}
+  - {fileID: 21300000, guid: 99eab7857c2b85242ab1cab5ce665c05, type: 3}
+  - {fileID: 21300000, guid: 97b15869287823444a3736859b6253a4, type: 3}
+  - {fileID: 21300000, guid: 142ee856b63627040925292682d27ede, type: 3}
+  - {fileID: 21300000, guid: 04066e8966398624eb155738ecc4164a, type: 3}
+  - {fileID: 21300000, guid: 99eab7857c2b85242ab1cab5ce665c05, type: 3}
+  - {fileID: 21300000, guid: 97b15869287823444a3736859b6253a4, type: 3}
+  - {fileID: 21300000, guid: 142ee856b63627040925292682d27ede, type: 3}
+  - {fileID: 21300000, guid: 04066e8966398624eb155738ecc4164a, type: 3}
+  - {fileID: 21300000, guid: 99eab7857c2b85242ab1cab5ce665c05, type: 3}
+  - {fileID: 21300000, guid: 97b15869287823444a3736859b6253a4, type: 3}
+  - {fileID: 21300000, guid: 142ee856b63627040925292682d27ede, type: 3}
+  - {fileID: 21300000, guid: 04066e8966398624eb155738ecc4164a, type: 3}
+  - {fileID: 21300000, guid: 99eab7857c2b85242ab1cab5ce665c05, type: 3}
+  - {fileID: 21300000, guid: 97b15869287823444a3736859b6253a4, type: 3}
+  - {fileID: 21300000, guid: 142ee856b63627040925292682d27ede, type: 3}
+  - {fileID: 21300000, guid: 04066e8966398624eb155738ecc4164a, type: 3}
+  - {fileID: 21300000, guid: 99eab7857c2b85242ab1cab5ce665c05, type: 3}
+  - {fileID: 21300000, guid: 97b15869287823444a3736859b6253a4, type: 3}
+  - {fileID: 21300000, guid: 142ee856b63627040925292682d27ede, type: 3}
+  - {fileID: 21300000, guid: 04066e8966398624eb155738ecc4164a, type: 3}
+  - {fileID: 21300000, guid: 99eab7857c2b85242ab1cab5ce665c05, type: 3}
+  - {fileID: 21300000, guid: 97b15869287823444a3736859b6253a4, type: 3}
+  - {fileID: 21300000, guid: 142ee856b63627040925292682d27ede, type: 3}
+  - {fileID: 21300000, guid: 04066e8966398624eb155738ecc4164a, type: 3}
+  - {fileID: 21300000, guid: 99eab7857c2b85242ab1cab5ce665c05, type: 3}
+  - {fileID: 21300000, guid: 5c324be6725a1544686c4f2dd48e8b7d, type: 3}
+  - {fileID: 21300000, guid: 4421c8db00cbcbe4bac158c52f7bdd24, type: 3}
   floorSprites:
   - {fileID: 21300000, guid: 6f3c6b33b14924948bac3c71f0b7382b, type: 3}
   - {fileID: 21300000, guid: a3a12affb7674804aafcf545495ed384, type: 3}

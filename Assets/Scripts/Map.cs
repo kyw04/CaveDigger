@@ -20,8 +20,8 @@ public class Map : MonoBehaviour
     public SpriteRenderer wallPrefab;
     public SpriteRenderer unbrokenWallPrefab;
     public SpriteRenderer floorPrefab;
-    public TopDownSprites wallSprites;
     public TopDownSprites unbrokenWallSprites;
+    public Sprite[] wallSprites;
     public Sprite[] floorSprites;
     public Vector2 mapSize;
     public int dungeonCount;
@@ -58,7 +58,9 @@ public class Map : MonoBehaviour
                 else
                 {
                     wall = wallPrefab;
-                    //wall.sprite = floorSprites[UnityEngine.Random.Range(0, floorSprites.Length)];
+                    wall.sprite = wallSprites[UnityEngine.Random.Range(0, wallSprites.Length)];
+                    wall.flipX = UnityEngine.Random.Range(0, 1) == 1 ? true : false;
+                    wall.flipY = UnityEngine.Random.Range(0, 1) == 1 ? true : false;
                 }
                 GameObject newWall = Instantiate(wall.gameObject, pos, Quaternion.identity);
                 newWall.transform.parent = this.transform;
