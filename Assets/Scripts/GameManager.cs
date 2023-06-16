@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class GameManager : MonoBehaviour
     public Image playerHealthImage;
     public TextMeshProUGUI playerHealthText;
     public Image playerRadiationImage;
+    public Image gameOverImage;
     public TextMeshProUGUI playerRadiationText;
     public TimeManager playerTime;
     public Inventory inventory;
@@ -19,6 +21,17 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         if (instance == null) { instance = this; }
+        Time.timeScale = 1.0f;
+        gameOverImage.gameObject.SetActive(false);
+    }
+
+    private void Update()
+    {
+        if (gameOverImage.gameObject.activeSelf &&
+            Input.anyKeyDown)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
     }
 
     public void SetUI()

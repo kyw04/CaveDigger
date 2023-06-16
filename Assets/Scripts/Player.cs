@@ -45,7 +45,9 @@ public struct Stats
 public enum State
 {
     Idle,
-    Attack
+    Attack,
+    Hit,
+    Die
 }
 
 public class Player : MonoBehaviour
@@ -173,7 +175,7 @@ public class Player : MonoBehaviour
         {
             if (collider.CompareTag("Enemy"))
             {
-                Debug.Log("Enemy!");
+                collider.GetComponent<Enemy>().OnDamage(realStats.damage);
             }
         }
 
@@ -287,6 +289,12 @@ public class Player : MonoBehaviour
     public void OnDamage(float value)
     {
         realStats.health -= value;
+
+        if (realStats.health <= 0f)
+        {
+            timeManager.scale = 0;
+            GameManager.instance.gameOverImage.gameObject.SetActive(true);
+        }
     }
 
     public void Heal(float value)
